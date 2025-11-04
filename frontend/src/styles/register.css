@@ -1,0 +1,76 @@
+/* src/styles/Register.css (o Register.module.css) */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  color: #f0f0f0;
+}
+
+.title {
+  color: #ff8c00;
+  margin-bottom: 15px;
+  font-size: 3em;
+  text-align: center;
+}
+
+.subtitle {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1em;
+  max-width: 80%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 300px;
+  padding: 30px;
+  background-color: #333333;
+  border-radius: 15px;
+  
+  /* Ajuste de sombra principal para más efecto 3D */
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.5), /* Más desplazamiento vertical, más desenfoque, más opacidad */
+    0 0 0 1px rgba(255, 255, 255, 0.08); /* Borde sutil ligeramente más visible */
+}
+
+.input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #555555;
+  background-color: #444444;
+  color: #f0f0f0;
+  font-size: 1em;
+  /* La sombra interior se mantiene para el efecto "hundido" */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25); /* Un poco más de sombra interior */
+}
+
+.input::placeholder {
+  color: #aaaaaa;
+}
+
+.button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff8c00;
+  color: #1a1a1a;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  
+  /* Ajuste de sombra para el botón */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Más desplazamiento y desenfoque */
+}
+
+.button:hover {
+  background-color: #e07b00;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
+}
+

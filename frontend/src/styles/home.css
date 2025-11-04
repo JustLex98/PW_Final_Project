@@ -1,0 +1,72 @@
+
+.home {
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #1a1a1a; 
+  color: #f0f0f0; 
+}
+
+.home-card {
+  width: 100%;
+  max-width: 760px;
+  background: #333333; 
+  border-radius: 15px; 
+  padding: 28px;
+  text-align: center;
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.5)
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+   }
+
+.home-logo {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,.35)); 
+}
+
+.home-sub {
+  opacity: .85;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.home-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px; 
+  border-radius: 8px; 
+  border: none; 
+  background: #ff8c00;     
+  color: #1a1a1a; 
+  font-weight: bold; 
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); 
+}
+.btn:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
+  background: #e07b00; 
+}
+
+.btn-outline {
+  background: transparent;
+  color: #f0f0f0; 
+  border: 1px solid #555555; 
+  box-shadow: none; 
+}
+.btn-outline:hover { 
+  background: #444444; /* Fondo más oscuro al pasar el ratón */
+  border-color: #ff8c00; /* Borde naranja al pasar el ratón para destacar */
+}

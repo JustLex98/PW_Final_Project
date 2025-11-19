@@ -8,7 +8,9 @@
   min-height: 100vh;
   width: 100%;
   color: #f0f0f0;
+  position: relative;       /* ⬅️ nuevo */
 }
+
 
 .title {
   color: #ff8c00;
@@ -74,3 +76,28 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
 }
 
+/* Logo en esquina para pantallas de auth (register / worker form) */
+
+.auth-logo {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.auth-logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.auth-logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.auth-logo-highlight {
+  color: #ff8c00; /* naranja ServiConecta */
+}

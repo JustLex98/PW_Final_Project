@@ -5,7 +5,7 @@ import '../styles/profiles.css';
 
 export default function Profiles() {
   return (
-    <div className="profiles-page-container home"> {/* Usa 'home' para el fondo */}
+    <div className="profiles-page-container home"> 
       <h1 className="profiles-page-title">Los pros perfectos para ti!</h1>
       <div className="profiles-grid">
         {profiles.map(p => (

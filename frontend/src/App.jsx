@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Profiles from "./pages/Profiles";
 import ProfileDetail from "./pages/ProfileDetail";
 import NotFound from "./pages/NotFound"; 
+import ContractorProfile from "./pages/ContractorProfile";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/profiles" element={<Profiles />} />
       <Route path="/profile/:id" element={<ProfileDetail />} />
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      <Route path="/contractor-profile" element={<ContractorProfile />} />
+    </Routes> 
   );
 }

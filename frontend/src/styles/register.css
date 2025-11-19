@@ -74,3 +74,13 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
 }
 
+.tipo-cuenta {
+  margin-bottom: 10px;
+}
+
+.tipo-cuenta-activo {
+  box-shadow: 0 0 0 2px #ffa500;
+  transform: translateY(-1px);
+}
+
+

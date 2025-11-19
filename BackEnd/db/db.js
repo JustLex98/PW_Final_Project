@@ -1,7 +1,6 @@
 require('dotenv').config(); // Carga variables de entorno (.env).
 const sql = require('mssql'); // Módulo de SQL Server.
 
-// Configuración de la conexión usando variables de entorno.
 const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -21,15 +20,9 @@ const config = {
     }
 };
 
-// Crea un Pool de Conexiones global.
 const pool = new sql.ConnectionPool(config);
 let poolConnect; 
 
-/**
- * Por sugerencia de la IA: El Pool de Conexiones es necesario para el rendimiento.
- * Mantiene las conexiones listas, evitando la sobrecarga de abrirlas y cerrarlas 
- * en cada solicitud, haciendo el servidor más eficiente y escalable.
- */
 async function connectPool() {
     try {
         if (!poolConnect) {
@@ -45,25 +38,21 @@ async function connectPool() {
 connectPool();
 
 /**
- * Función central para ejecutar consultas.
- * Por sugerencia de la IA: Se implementaron consultas parametrizadas (usando req.input) 
- * para prevenir la Inyección SQL, tratando los datos del usuario de forma segura.
+ * Función central para ejecutar consultas SQL usando el Pool.
+ * @param {string} query La consulta SQL con parámetros (@nombre).
+ * @param {Array} params Un array de objetos para los parámetros. Ej: [{ name: 'userId', type: sql.Int, value: 1 }]
  */
-async function executeQuery(query, request) {
-    await poolConnect;
-
+async function executeQuery(query, params = []) {
+    await poolConnect; 
+    
     try {
-        const req = pool.request(); 
-
-        // Se añaden los parámetros de forma segura (prevención SQL Injection).
-        if (request && request.parameters) {
-            for (const name in request.parameters) {
-                const param = request.parameters[name];
-                req.input(name, param.type, param.value);
-            }
-        }
-
-        const result = await req.query(query);
+        const request = pool.request();
+        // Añadir cada parámetro a la solicitud
+        params.forEach(param => {
+            request.input(param.name, param.type, param.value);
+        });
+        
+        const result = await request.query(query);
         return result;
     } catch (err) {
         console.error("Error en la consulta SQL:", err);
@@ -71,7 +60,6 @@ async function executeQuery(query, request) {
     }
 }
 
-// Exporta la función y el objeto sql.
 module.exports = {
     executeQuery,
     sql

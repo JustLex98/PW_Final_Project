@@ -1,4 +1,4 @@
-
+/*frontend/src/pages/ProfileDetail.jsx*/
 import { useParams } from "react-router-dom";
 import profiles from "../data/Profiles.js"; 
 import '../styles/profiles.css';
@@ -26,8 +26,9 @@ export default function ProfileDetail() {
         <h1 className="profile-detail-name">{profile.name}</h1>
         <p className="profile-detail-info">Oficio: <span className="profile-detail-value">{profile.job}</span></p>
         <p className="profile-detail-info">Precio: <span className="profile-detail-value">${profile.price}/hora</span></p>
+        <p className="profile-detail-info">Teléfono:{" "} <span className="profile-detail-value">{profile.phoneNumber}</span></p>
         <p className="profile-detail-info">Descripción: <span className="profile-detail-value">{profile.bio}</span></p>
-        
+                
         {profile.rating && profile.reviews && (
           <div className="profile-detail-rating">
             <span>{"⭐".repeat(Math.round(profile.rating))}</span>

@@ -1,20 +1,21 @@
-require('dotenv').config(); 
-const sql = require('mssql');
+require('dotenv').config(); // Carga variables de entorno (.env).
+const sql = require('mssql'); // Módulo de SQL Server.
 
 const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER, 
+    server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
     port: parseInt(process.env.DB_PORT),
+    // Configuración del Pool: crucial para el rendimiento.
     pool: {
-        max: 10,
+        max: 10, // Máximo de 10 conexiones disponibles simultáneamente.
         min: 0,
-        idleTimeoutMillis: 30000 
+        idleTimeoutMillis: 30000 // Cierra conexiones inactivas después de 30 segundos.
     },
     options: {
-        encrypt: false, 
-        trustedConnection: false, 
+        encrypt: false,
+        trustedConnection: false,
         enableArithAbort: true
     }
 };
@@ -25,9 +26,9 @@ let poolConnect;
 async function connectPool() {
     try {
         if (!poolConnect) {
-            poolConnect = pool.connect();
+            poolConnect = pool.connect(); 
         }
-        await poolConnect;
+        await poolConnect; 
         console.log('✅ Conexión al Pool SQL establecida.');
     } catch (err) {
         console.error('❌ ERROR AL CONECTAR EL POOL SQL:', err.message);
@@ -55,8 +56,8 @@ async function executeQuery(query, params = []) {
         return result;
     } catch (err) {
         console.error("Error en la consulta SQL:", err);
-        throw err; 
-    } 
+        throw err;
+    }
 }
 
 module.exports = {

@@ -18,7 +18,7 @@ app.use(express.json());
 
 // RUTA DE PRUEBA
 app.get("/", (req, res) => {
-  res.send("Servidor ServiConecta Backend en funcionamiento.");
+  res.send("Servidor ServiConecta Backend en funcionamiento.");
 });
 
 // CONEXIÓN DE RUTAS

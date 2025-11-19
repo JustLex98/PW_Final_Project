@@ -4,6 +4,17 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+/*
+ * NOTA DE IMPLEMENTACIÓN:
+ * Este código fue implementado con asistencia de Inteligencia Artificial.
+ * * ¿Por qué es necesario el hashing (bcrypt)? 
+ * Para NUNCA guardar las contraseñas reales. Si la base de datos se filtra, 
+ * solo se exponen los hashes (irreversibles).
+ * * ¿Por qué es necesario el JWT (jsonwebtoken)?
+ * Para crear un token de sesión seguro que el usuario puede usar para probar su identidad
+ * en peticiones futuras (estar "logeado") sin enviar la contraseña cada vez.
+ */
+
 /**
  * Maneja el registro de un nuevo usuario.
  */

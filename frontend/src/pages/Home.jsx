@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import profiles from "../data/profiles";
 import ProfileCard from "../components/ProfileCard";
@@ -17,9 +17,31 @@ const categories = [
 const Home = () => {
   const navigate = useNavigate();
 
+  // 🔍 estado para búsqueda y filtro
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("none"); // "none" | "rating" | "price"
+
+  // 1) filtramos por nombre/oficio
+  const filtered = profiles.filter((p) => {
+    const text = `${p.name} ${p.job}`.toLowerCase();
+    return text.includes(searchTerm.toLowerCase());
+  });
+
+  // 2) ordenamos según el filtro seleccionado
+  const filteredAndSorted = [...filtered].sort((a, b) => {
+    if (sortBy === "rating") {
+      const ra = a.rating || 0;
+      const rb = b.rating || 0;
+      return rb - ra; // de mayor a menor rating
+    }
+    if (sortBy === "price") {
+      return (a.price || 0) - (b.price || 0); // de menor a mayor costo
+    }
+    return 0; // sin ordenar extra
+  });
+
   return (
     <div className="home">
- 
       <header className="home-header">
         <div className="home-header-left">
           <img
@@ -30,7 +52,6 @@ const Home = () => {
           <span className="home-brand">
             Servi<span className="home-brand-highlight">Conecta</span>
           </span>
-
         </div>
         <div className="home-header-actions">
           <button className="btn btn-outline" onClick={() => navigate("/login")}>
@@ -76,7 +97,27 @@ const Home = () => {
         />
       </section>
 
-    
+      {/* 🔍 Search + filtros (debajo del hero) */}
+      <section className="home-filters">
+        <input
+          className="home-search"
+          type="text"
+          placeholder="Buscar por nombre u oficio (ej. plomero, carpintero)..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        <select
+          className="home-select"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="none">Ordenar por</option>
+          <option value="rating">Mejor rating</option>
+          <option value="price">Menor costo</option>
+        </select>
+      </section>
+
       <section className="categories-section">
         <h2>Explora por categoría</h2>
         <div className="categories-grid">
@@ -89,21 +130,26 @@ const Home = () => {
         </div>
       </section>
 
-    
       <section className="profiles-section" id="profiles-list">
         <div className="profiles-header">
           <h2>Perfiles destacados</h2>
-          <p>Puedes ver los perfiles sin iniciar sesión.</p>
+          <p>
+            Puedes hecharle un vistazo rápido a los perfiles sin necesidad de
+            iniciar sesión. Para verlos más detalladamente, ¡inicia sesión!
+          </p>
         </div>
 
         <div className="profiles-grid">
-          {profiles.map((p) => (
+          {filteredAndSorted.map((p) => (
             <ProfileCard
               key={p.id}
               id={p.id}
               name={p.name}
               job={p.job}
               price={p.price}
+              rating={p.rating}
+              reviews={p.reviews}
+              imageUrl={p.imageUrl}
             />
           ))}
         </div>

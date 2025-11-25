@@ -230,3 +230,117 @@
         max-width: 90%;
     }
 }
+
+/* ====== LAYOUT DETALLE CON DOS TARJETAS ====== */
+
+.profile-detail-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.profile-detail-layout {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* La tarjeta de perfil ya la tienes (.profile-detail-card) */
+/* Solo aseguramos que se comporte bien en el layout nuevo */
+.profile-detail-card {
+  flex: 1;
+}
+
+/* ====== TARJETA DE RESEÑAS ====== */
+
+.profile-review-card {
+  flex: 1;
+  background: var(--card-background);
+  border-radius: 15px;
+  padding: 24px;
+  box-shadow:
+    0 12px 24px var(--shadow-color),
+    0 0 0 1px var(--border-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile-review-title {
+  font-size: 1.5em;
+  margin: 0 0 12px 0;
+}
+
+.profile-review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.profile-review-stars {
+  color: var(--orange-color);
+  font-size: 1.4em;
+}
+
+.profile-review-rating {
+  font-size: 0.95em;
+  color: var(--light-text-color);
+}
+
+.profile-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.profile-review-item {
+  background: #404040;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.profile-review-text {
+  margin: 0 0 6px 0;
+  font-size: 0.9em;
+  color: var(--light-text-color);
+}
+
+.profile-review-author {
+  margin: 0;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--orange-color);
+}
+
+.profile-review-button {
+  align-self: flex-start;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #ff8c00;
+  color: #1a1a1a;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s ease, box-shadow 0.2s ease,
+    transform 0.1s ease;
+}
+
+.profile-review-button:hover {
+  background: #e07b00;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ====== RESPONSIVE: en pantallas pequeñas se apilan ====== */
+@media (max-width: 900px) {
+  .profile-detail-layout {
+    flex-direction: column;
+  }
+}

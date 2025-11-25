@@ -9,6 +9,7 @@ import {
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import HomeLogged from "./pages/HomeLogged"; 
 import Register from "./pages/Register";
 import Profiles from "./pages/Profiles";
 import ProfileDetail from "./pages/ProfileDetail";
@@ -36,11 +37,11 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/complete-profile" element={<WorkerForm />} />
 
-
-        {/* si quieres mantener esta página de lista extra */}
+   <Route path="/inicio" element={<HomeLogged />} />
+        
         <Route path="/profiles" element={<Profiles />} />
 
-        {/* Detalle protegido: solo logueado */}
+    
         <Route
           path="/profile/:id"
           element={

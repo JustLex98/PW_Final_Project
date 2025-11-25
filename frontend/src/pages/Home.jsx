@@ -17,27 +17,24 @@ const categories = [
 const Home = () => {
   const navigate = useNavigate();
 
-  // 🔍 estado para búsqueda y filtro
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("none"); // "none" | "rating" | "price"
+  const [sortBy, setSortBy] = useState("none"); 
 
-  // 1) filtramos por nombre/oficio
   const filtered = profiles.filter((p) => {
     const text = `${p.name} ${p.job}`.toLowerCase();
     return text.includes(searchTerm.toLowerCase());
   });
 
-  // 2) ordenamos según el filtro seleccionado
   const filteredAndSorted = [...filtered].sort((a, b) => {
     if (sortBy === "rating") {
       const ra = a.rating || 0;
       const rb = b.rating || 0;
-      return rb - ra; // de mayor a menor rating
+      return rb - ra; 
     }
     if (sortBy === "price") {
-      return (a.price || 0) - (b.price || 0); // de menor a mayor costo
+      return (a.price || 0) - (b.price || 0); 
     }
-    return 0; // sin ordenar extra
+    return 0;
   });
 
   return (
@@ -97,7 +94,6 @@ const Home = () => {
         />
       </section>
 
-      {/* 🔍 Search + filtros (debajo del hero) */}
       <section className="home-filters">
         <input
           className="home-search"

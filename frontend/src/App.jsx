@@ -9,13 +9,12 @@ import {
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import HomeLogged from "./pages/HomeLogged"; 
+import HomeLogged from "./pages/HomeLogged";
 import Register from "./pages/Register";
 import Profiles from "./pages/Profiles";
 import ProfileDetail from "./pages/ProfileDetail";
 import NotFound from "./pages/NotFound";
 import WorkerForm from "./pages/WorkerForm";
-
 
 // Componente para proteger rutas
 const RequireAuth = ({ children }) => {
@@ -31,17 +30,23 @@ export default function App() {
   return (
     <Router>
       <Routes>
+        {/* Home pública */}
         <Route path="/" element={<Home />} />
 
+        {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Formulario para completar perfil de trabajador */}
         <Route path="/complete-profile" element={<WorkerForm />} />
 
-   <Route path="/inicio" element={<HomeLogged />} />
-        
+        {/* Home después de login */}
+        <Route path="/inicio" element={<HomeLogged />} />
+
+        {/* Lista de perfiles (pública por ahora) */}
         <Route path="/profiles" element={<Profiles />} />
 
-    
+        {/* Detalle de perfil (protegido por login) */}
         <Route
           path="/profile/:id"
           element={
@@ -51,6 +56,7 @@ export default function App() {
           }
         />
 
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

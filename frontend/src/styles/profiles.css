@@ -1,4 +1,4 @@
-
+/* frontend/src/styles/profiles.css */
 :root {
   --background-color: #1a1a1a;
   --card-background: #333333;
@@ -9,14 +9,13 @@
   --light-text-color: rgba(240, 240, 240, 0.85); /* opacity .85 */
 }
 
-
 .profiles-page-container {
-    padding: 40px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
- }
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 .profiles-page-title {
   color: var(--text-color);
@@ -36,8 +35,8 @@
 }
 
 .profile-card-link {
-    text-decoration: none; 
-    color: inherit; 
+  text-decoration: none; 
+  color: inherit; 
 }
 
 .profile-card {
@@ -53,7 +52,8 @@
   flex-direction: column;
   justify-content: space-between;
   transition: transform .15s ease, box-shadow .15s ease;
-  height: 100%; }
+  height: 100%;
+}
 
 .profile-card:hover {
   transform: translateY(-3px);
@@ -138,13 +138,14 @@
   opacity: .7;
 }
 
+/* ====== DETALLE DE PERFIL (tarjeta base) ====== */
 
 .profile-detail-page {
-    min-height: 100vh; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
+  min-height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
 }
 
 .profile-detail-card {
@@ -183,63 +184,25 @@
 }
 
 .profile-detail-value {
-    font-weight: bold;
-    color: var(--orange-color);
+  font-weight: bold;
+  color: var(--orange-color);
 }
 
 .profile-detail-rating {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-    font-size: 1.2em;
-    color: var(--light-text-color);
-}
-
-.profile-detail-rating span:first-child {
-    color: var(--orange-color);
-    margin-right: 8px;
-}
-
-@media (max-width: 768px) {
-  .profiles-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-    padding: 0 15px;
-  }
-
-  .profile-card {
-    padding: 15px;
-  }
-
-  .profile-detail-card {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-    .profiles-grid {
-        grid-template-columns: 1fr; 
-        padding: 0 10px;
-    }
-    .profiles-page-title {
-        font-size: 2em;
-    }
-    .profile-detail-card {
-        padding: 15px;
-        max-width: 90%;
-    }
-}
-
-/* ====== LAYOUT DETALLE CON DOS TARJETAS ====== */
-
-.profile-detail-page {
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  margin-top: 15px;
+  font-size: 1.2em;
+  color: var(--light-text-color);
 }
+
+.profile-detail-rating span:first-child {
+  color: var(--orange-color);
+  margin-right: 8px;
+}
+
+/* ====== LAYOUT DETALLE CON DOS TARJETAS ====== */
 
 .profile-detail-layout {
   display: flex;
@@ -248,8 +211,7 @@
   max-width: 1100px;
 }
 
-/* La tarjeta de perfil ya la tienes (.profile-detail-card) */
-/* Solo aseguramos que se comporte bien en el layout nuevo */
+/* la tarjeta de perfil se adapta al layout */
 .profile-detail-card {
   flex: 1;
 }
@@ -338,9 +300,69 @@
   transform: translateY(-1px);
 }
 
-/* ====== RESPONSIVE: en pantallas pequeñas se apilan ====== */
+/* ====== BUSCADOR EN LISTA DE PERFILES ====== */
+
+.profiles-search-container {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.profiles-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: #262626;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.profiles-search-input::placeholder {
+  color: rgba(240,240,240,0.6);
+}
+
+.profiles-search-input:focus {
+  border-color: var(--orange-color);
+  box-shadow: 0 0 0 1px var(--orange-color);
+}
+
+/* ====== RESPONSIVE ====== */
+
 @media (max-width: 900px) {
   .profile-detail-layout {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .profiles-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 0 15px;
+  }
+
+  .profile-card {
+    padding: 15px;
+  }
+
+  .profile-detail-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profiles-grid {
+    grid-template-columns: 1fr; 
+    padding: 0 10px;
+  }
+  .profiles-page-title {
+    font-size: 2em;
+  }
+  .profile-detail-card {
+    padding: 15px;
+    max-width: 90%;
   }
 }

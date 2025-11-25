@@ -79,3 +79,9 @@
   color: #ff8c00;
   font-weight: 500;
 }
+
+.login-error {
+  color: salmon;
+  font-size: 0.9rem;
+  margin: 4px 0 0;
+}

@@ -42,7 +42,7 @@ const Home = () => {
       <header className="home-header">
         <div className="home-header-left">
           <img
-            src="/serviconecta-logo-sin-letras.jpg"
+            src="/serviconecta-logo-sin-letras.png"
             alt="ServiConecta"
             className="home-logo-small"
           />

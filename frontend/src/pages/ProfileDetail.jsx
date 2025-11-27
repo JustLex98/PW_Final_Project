@@ -1,7 +1,7 @@
-// src/pages/ProfileDetail.jsx
+
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import profiles from "../data/profiles"; // archivo en minúsculas
+import profiles from "../data/profiles"; 
 import "../styles/profiles.css";
 
 export default function ProfileDetail() {
@@ -33,8 +33,7 @@ export default function ProfileDetail() {
   return (
     <div className="home profile-detail-page">
       <div className="profile-detail-layout">
-        {/* ===== TARJETA IZQUIERDA: DETALLE DEL PERFIL ===== */}
-        <div className="profile-detail-card">
+        <div className="profile-detail-card"> 
           <img
             src={
               profile.imageUrl ||
@@ -58,12 +57,29 @@ export default function ProfileDetail() {
             </span>
           </p>
 
+          {profile.phoneNumber && (
+            <p className="profile-detail-info">
+              Teléfono:{" "}
+              <span className="profile-detail-value">
+                {profile.phoneNumber}
+              </span>
+            </p>
+          )}
+
           <p className="profile-detail-info">
             Descripción:{" "}
             <span className="profile-detail-value">{profile.bio}</span>
           </p>
 
-          {/* Botón para volver a la home de usuario logueado */}
+          {hasRating && (
+            <div className="profile-detail-rating">
+              <span>{"⭐".repeat(Math.round(profile.rating))}</span>
+              <span>
+                {profile.rating.toFixed(1)} ({profile.reviews} reseñas)
+              </span>
+            </div>
+          )}
+
           <button
             className="profile-review-button"
             onClick={() => navigate("/inicio")}
@@ -79,12 +95,16 @@ export default function ProfileDetail() {
 
           <div className="profile-review-summary">
             <span className="profile-review-stars">
-              {hasRating ? "★★★★★" : "☆☆☆☆☆"}
+              {hasRating
+                ? "⭐".repeat(Math.round(profile.rating))
+                : "★★★★★"}
             </span>
             <span className="profile-review-rating">
               {hasRating
-                ? `${profile.rating.toFixed(1)} de ${profile.reviews} reseñas`
-                : "Aún no tiene reseñas"}
+                ? `${profile.rating.toFixed(1)} de ${
+                    profile.reviews
+                  } reseñas`
+                : "Sé la primera persona en dejar una reseña."}
             </span>
           </div>
 
@@ -112,7 +132,17 @@ export default function ProfileDetail() {
             </article>
           </div>
 
-          <button className="profile-review-button">
+          <button
+            className="profile-review-button"
+            onClick={() =>
+              navigate(`/profile/${profile.id}/review`, {
+                state: {
+                  contractorId: profile.id,
+                  contractorName: profile.name,
+                },
+              })
+            }
+          >
             Escribir una reseña
           </button>
         </div>

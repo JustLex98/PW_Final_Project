@@ -1,17 +1,21 @@
 // src/pages/WorkerForm.jsx
 import React, { useState } from "react";
 import "../styles/Register.css"; // reutilizamos el estilo del register
+import { useLocation } from "react-router-dom";
 
 const WorkerForm = () => {
+  const location = useLocation();
+  const formRegister = location.state || {};
+
   const [formData, setFormData] = useState({
-    firstName: "",
-    LastName: "",
-    Email: "",
+    firstName: formRegister.firstName || "",
+    lastName: formRegister.lastName || "",
+    email: formRegister.email || "",
     BusinessName: "",
     PhoneNumber: "",
     Bio: "",
     YearsOfEcperience: "",
-    categroies: [],   // ojo: lo dejamos tal como lo escribiste
+    categroies: [],   
   });
 
   const categoriesOptions = [
@@ -21,6 +25,7 @@ const WorkerForm = () => {
     "Pintor",
     "Limpieza",
     "Jardinería",
+    "Otro",
   ];
 
   const handleChange = (e) => {
@@ -62,7 +67,7 @@ const WorkerForm = () => {
     <div className="container">
       {/* Logo en esquina */}
       <div className="auth-logo">
-        <img src="/serviconecta-logo-dark.png" alt="ServiConecta" />
+        <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
         <span className="auth-logo-text">
           Servi<span className="auth-logo-highlight">Conecta</span>
         </span>
@@ -87,9 +92,9 @@ const WorkerForm = () => {
         <input
           className="input"
           type="text"
-          name="LastName"
+          name="lastName"
           placeholder="Apellido"
-          value={formData.LastName}
+          value={formData.lastName}
           onChange={handleChange}
           required
         />
@@ -97,9 +102,9 @@ const WorkerForm = () => {
         <input
           className="input"
           type="email"
-          name="Email"
+          name="email"
           placeholder="Correo electrónico"
-          value={formData.Email}
+          value={formData.email}
           onChange={handleChange}
           required
         />

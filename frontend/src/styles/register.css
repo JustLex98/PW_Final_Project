@@ -107,3 +107,43 @@
   box-shadow: 0 0 0 2px #ffa500;
   transform: translateY(-1px);
 }
+
+/* ===== Estrellas interactivas para ReviewForm ===== */
+
+.review-stars-label {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.review-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.review-star {
+  background: none;
+  border: none;
+  font-size: 1.9rem;
+  cursor: pointer;
+  color: #555555; /* estrellas apagadas */
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.review-star.active {
+  color: #ff8c00; /* estrella ServiConecta */
+}
+
+.review-star:hover {
+  transform: translateY(-1px);
+}
+
+.review-stars-number {
+  font-size: 0.9rem;
+  color: rgba(240, 240, 240, 0.8);
+  margin-left: 4px;
+}

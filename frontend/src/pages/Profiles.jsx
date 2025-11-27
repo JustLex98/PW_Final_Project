@@ -1,6 +1,6 @@
-// src/pages/Profiles.jsx
+
 import React, { useState } from "react";
-import profiles from "../data/profiles"; // minúsculas
+import profiles from "../data/profiles"; 
 import ProfileCard from "../components/ProfileCard.jsx";
 import "../styles/profiles.css";
 
@@ -15,7 +15,7 @@ export default function Profiles() {
     <div className="profiles-page-container home">
       <h1 className="profiles-page-title">¡Los pros perfectos para ti!</h1>
 
-      {/* 🔎 Buscador por job */}
+      {/*  Buscador por job */}
       <div className="profiles-search-container">
         <input
           type="text"

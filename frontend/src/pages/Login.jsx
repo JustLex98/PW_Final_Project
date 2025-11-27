@@ -1,6 +1,8 @@
+// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/login.css"; // o "../styles/Login.css" según cómo se llame tu archivo
+import api from "../api";              // 👈 importante
+import "../styles/login.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -8,16 +10,35 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // que no recargue la página
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
     if (!email.trim() || !password.trim()) {
       setError("⚠ Debes ingresar tu correo y contraseña.");
       return;
     }
 
-    setError(""); // limpia el mensaje si todo está bien
-    navigate("/profiles"); // redirige a la página de perfiles
+    try {
+      // Llamamos a tu backend: POST http://localhost:3001/api/auth/login
+      const res = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      // Guardamos token y datos básicos del usuario
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.name);
+      localStorage.setItem("userRole", res.data.role);
+
+      // Te mando a la home de usuario logueado
+      navigate("/inicio");
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Algo salió mal al iniciar sesión."
+      );
+    }
   };
 
   return (
@@ -46,18 +67,14 @@ export default function Login() {
         />
         <input
           className="login-input"
-          placeholder="Password"
+          placeholder="Contraseña"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        {error && (
-          <p className="login-error">
-            {error}
-          </p>
-        )}
+        {error && <p className="login-error">{error}</p>}
 
         <button className="login-button" type="submit">
           Entrar

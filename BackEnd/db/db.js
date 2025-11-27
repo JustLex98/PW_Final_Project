@@ -29,9 +29,9 @@ async function connectPool() {
             poolConnect = pool.connect(); 
         }
         await poolConnect; 
-        console.log('✅ Conexión al Pool SQL establecida.');
+        console.log('Conexión al Pool SQL establecida.');
     } catch (err) {
-        console.error('❌ ERROR AL CONECTAR EL POOL SQL:', err.message);
+        console.error('ERROR AL CONECTAR EL POOL SQL:', err.message);
         throw err;
     }
 }

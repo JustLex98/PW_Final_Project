@@ -1,4 +1,3 @@
-// src/pages/HomeLogged.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import profiles from "../data/profiles";
@@ -15,7 +14,7 @@ const HomeLogged = () => {
       <header className="home-header">
         <div className="home-header-left">
           <img
-            src="/serviconecta-logo-sin-letras.jpg"
+            src="/serviconecta-logo-sin-letras.png"
             alt="ServiConecta"
             className="home-logo-small"
           />
@@ -26,7 +25,7 @@ const HomeLogged = () => {
 
         <div className="home-header-actions">
           <button className="btn btn-outline" onClick={() => navigate("/complete-profile")}>
-            Mi perfil
+            Editar mi perfil
           </button>
           <button
             className="btn"
@@ -44,8 +43,7 @@ const HomeLogged = () => {
       {/* HERO PARA USUARIO LOGUEADO */}
       <section className="home-hero">
         <div>
-          <h1 className="home-hero-title">
-            Hola de nuevo 👋  
+          <h1 className="home-hero-title">  
             Encuentra y administra a tus profesionales de confianza.
           </h1>
           <p className="home-hero-sub">

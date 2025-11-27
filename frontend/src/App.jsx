@@ -15,6 +15,7 @@ import Profiles from "./pages/Profiles";
 import ProfileDetail from "./pages/ProfileDetail";
 import NotFound from "./pages/NotFound";
 import WorkerForm from "./pages/WorkerForm";
+import ReviewForm from "./pages/ReviewForm";
 
 // Componente para proteger rutas
 const RequireAuth = ({ children }) => {
@@ -52,6 +53,15 @@ export default function App() {
           element={
             <RequireAuth>
               <ProfileDetail />
+            </RequireAuth>
+          }
+        />
+         {/* 👇 Nueva ruta para escribir reseña */}
+        <Route
+          path="/profile/:id/review"
+          element={
+            <RequireAuth>
+              <ReviewForm />
             </RequireAuth>
           }
         />

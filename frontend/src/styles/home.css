@@ -1,4 +1,3 @@
-/* === Página Home ServiConecta (dark) === */
 
 .home {
   min-height: 100vh;
@@ -31,7 +30,7 @@
 }
 
 .home-logo-small {
-  height: 70px;      /* antes 40px */
+  height: 70px;      
   width: auto;
   object-fit: contain;
 }
@@ -42,15 +41,14 @@
 }
 
 .home-brand-highlight {
-  color: #ff8c00;   /* naranja ServiConecta */
+  color: #ff8c00;   
 }
-/* Botones del header reutilizan el estilo de .btn */
+
 .home-header-actions {
   display: flex;
   gap: 10px;
 }
 
-/* HERO central (texto grande y logo grande opcional) */
 .home-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
@@ -98,7 +96,7 @@
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
 }
 
-/* Botones principales */
+
 .btn {
   padding: 12px 20px;
   border-radius: 8px;
@@ -129,7 +127,7 @@
   border-color: #ff8c00;
 }
 
-/* CATEGORÍAS */
+/* Categorias */
 .categories-section {
   margin-bottom: 32px;
 }
@@ -156,6 +154,14 @@
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border 0.12s ease,
     background 0.12s ease;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.15s ease;
+}
+
+.category-card-active {
+  border: 1px solid #ff9d2b; 
+  box-shadow: 0 0 0 1px #ff9d2b;
+  transform: translateY(-2px);
 }
 
 .category-card:hover {
@@ -185,8 +191,6 @@
   opacity: 0.8;
   margin-bottom: 18px;
 }
-
-/* ====== FILTROS HOME (SEARCH + SELECT) ====== */
 
 .home-filters {
   max-width: 1200px;
@@ -232,7 +236,7 @@
   border-color: #ff8c00;
 }
 
-/* responsive: en pantallas pequeñas que se apilen */
+
 @media (max-width: 600px) {
   .home-filters {
     flex-direction: column;

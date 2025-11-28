@@ -1,4 +1,3 @@
-/* src/styles/Register.css */
 
 .container {
   display: flex;
@@ -146,4 +145,40 @@
   font-size: 0.9rem;
   color: rgba(240, 240, 240, 0.8);
   margin-left: 4px;
+}
+
+/* ===== Layout especial para WorkerForm (más ancho, tipo 2 columnas) ===== */
+
+.form.form--wide {
+  width: 100%;
+  max-width: 1000px;      /* controla qué tan ancho llega el card */
+  padding: 40px 50px;
+  align-items: stretch;   /* que el contenido use todo el ancho */
+}
+
+/* contenedor grid de los campos */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;   /* por defecto 1 columna (mobile) */
+  gap: 18px 32px;               /* fila / columna */
+}
+
+/* cada campo con label */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+/* para campos que deben ocupar todo el ancho (bio, negocio, etc.) */
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+/* a partir de tablets/escritorio, pasamos a 2 columnas */
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

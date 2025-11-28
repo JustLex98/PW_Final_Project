@@ -1,34 +1,36 @@
-// Archivo: src/api.js
+import axios from "axios";
+import { getToken } from "./auth";
 
-import axios from 'axios';
-
-const apiClient = axios.create({
-    baseURL: 'http://localhost:3001/api',
-    headers: { 'Content-Type': 'application/json' }
+const api = axios.create({
+  baseURL: "http://localhost:3001/api",
 });
 
-// Interceptor para añadir automáticamente el token a todas las peticiones
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
+api.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-// --- Funciones de Autenticación ---
-export const login = (credentials) => apiClient.post('/auth/login', credentials);
-export const register = (userData) => apiClient.post('/auth/register', userData);
+// Funciones de Autenticación
+export const login = (credentials) => api.post('/auth/login', credentials);
+export const register = (userData) => api.post('/auth/register', userData);
 
-// --- Funciones de Perfil de Contratista ---
-export const getContractorProfile = () => apiClient.get('/contractor/profile');
-export const updateContractorProfile = (profileData) => apiClient.put('/contractor/profile', profileData);
+// Funciones de Perfil de Contratista
+export const getContractorProfile = () => api.get('/contractor/profile');
+export const updateContractorProfile = (profileData) => api.put('/contractor/profile', profileData);
 
-// --- Funciones Públicas ---
-export const getAllCategories = () => apiClient.get('/categories');
-export const getPublicContractors = () => apiClient.get('/public/contractors');
+// Funciones Públicas
+export const getAllCategories = () => api.get('/categories');
+export const getPublicContractors = (params) => api.get('/public/contractors', { params });
 
-export default apiClient;
+// Funciones de Reseñas y Solicitudes
+export const createReview = (reviewData) => api.post('/reviews', reviewData);
+export const createServiceRequest = (requestData) => api.post('/requests', requestData);
+
+
+export default api; 

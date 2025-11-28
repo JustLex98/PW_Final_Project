@@ -1,89 +1,95 @@
-// src/pages/Login.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api";              // 👈 importante
-import "../styles/login.css";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext.jsx';
+import '../styles/login.css';
 
-export default function Login() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+function LoginPage() {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
+    
+    const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
-    if (!email.trim() || !password.trim()) {
-      setError("⚠ Debes ingresar tu correo y contraseña.");
-      return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
 
-    try {
-      // Llamamos a tu backend: POST http://localhost:3001/api/auth/login
-      const res = await api.post("/auth/login", {
-        email,
-        password,
-      });
+        if (!formData.email || !formData.password) {
+            setError('Por favor, completa todos los campos.');
+            return;
+        }
 
-      // Guardamos token y datos básicos del usuario
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("userName", res.data.name);
-      localStorage.setItem("userRole", res.data.role);
+        try {
+            await login(formData);
+            
+            navigate('/inicio'); 
 
-      // Te mando a la home de usuario logueado
-      navigate("/inicio");
-    } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.message || "Algo salió mal al iniciar sesión."
-      );
-    }
-  };
+        } catch (err) {
+            if (err.response && err.response.status === 401) {
+                setError('Credenciales inválidas. Por favor, verifica tu correo y contraseña.');
+            } else {
+                setError('Ocurrió un error. Por favor, inténtalo de nuevo.');
+            }
+            console.error("Error en el inicio de sesión:", err);
+        }
+    };
 
-  return (
-    <div className="login-container">
-      <div className="auth-logo">
-        <img src="/serviconecta-logo-dark.png" alt="ServiConecta" />
-        <span className="auth-logo-text">
-          Servi<span className="auth-logo-highlight">Conecta</span>
-        </span>
-      </div>
+    return (
+        <div className="container">
+            <div className="auth-logo">
+                <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
+                <span className="auth-logo-text">
+                    Servi<span className="auth-logo-highlight">Conecta</span>
+                </span>
+            </div>
 
-      <h1 className="login-title">Iniciar sesión</h1>
-      <p className="login-subtitle">
-        Ingresa con tu cuenta para contactar trabajadores
-        o gestionar tus servicios.
-      </p>
+            <h1 className="title">Iniciar Sesión</h1>
+            <p className="subtitle">Bienvenido de nuevo. Ingresa a tu cuenta.</p>
 
-      <form className="login-form" onSubmit={handleLogin}>
-        <input
-          className="login-input"
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          className="login-input"
-          placeholder="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <form className="form" onSubmit={handleSubmit}>
+                <input
+                    className="input"
+                    type="email"
+                    name="email"
+                    placeholder="Correo electrónico"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    className="input"
+                    type="password"
+                    name="password"
+                    placeholder="Contraseña"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+                
+                {error && <p className="error-message">{error}</p>}
 
-        {error && <p className="login-error">{error}</p>}
+                <button className="button" type="submit">
+                    Iniciar Sesión
+                </button>
+            </form>
 
-        <button className="login-button" type="submit">
-          Entrar
-        </button>
-      </form>
-
-      <p className="login-footer-text">
-        ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
-      </p>
-    </div>
-  );
+            <p className="redirect-link">
+                ¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link>
+            </p>
+        </div>
+    );
 }
+
+export default LoginPage;

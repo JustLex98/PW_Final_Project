@@ -1,186 +1,370 @@
+// src/pages/WorkerForm.jsx
 import React, { useState, useEffect } from "react";
-import {
-  getContractorProfile,
-  updateContractorProfile,
-  getAllCategories,
-} from "../api";
 import "../styles/Register.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import api from "../api";
 
-function WorkerForm() {
-  const [formData, setFormData] = useState(null);
-  const [allCategories, setAllCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+const WorkerForm = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const formRegister = location.state || {};
 
+  const [formData, setFormData] = useState({
+    firstName: formRegister.firstName || "",
+    lastName: formRegister.lastName || "",
+    email: formRegister.email || "",
+    BusinessName: "",
+    PhoneNumber: "",
+    Bio: "",
+    YearsOfEcperience: "",
+    priceMin: "",
+    priceMax: "",
+    categoryId: "", // un solo servicio principal
+  });
+
+  const [categories, setCategories] = useState([]);
+  const [loadingCats, setLoadingCats] = useState(true);
+  const [catsError, setCatsError] = useState("");
+
+  // 👇 nuevo: estado para cargar el perfil actual
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [profileError, setProfileError] = useState("");
+
+  // 1) Cargar categorías desde el backend
   useEffect(() => {
-    const loadData = async () => {
+    const fetchCategories = async () => {
       try {
-        const [profileRes, categoriesRes] = await Promise.all([
-          getContractorProfile(),
-          getAllCategories(),
-        ]);
-        const profileFromAPI = profileRes.data;
-        const formattedProfile = {
-          businessName: profileFromAPI.BusinessName || "",
-          phoneNumber: profileFromAPI.PhoneNumber || "",
-          bio: profileFromAPI.Bio || "",
-          yearsOfExperience: profileFromAPI.YearsOfExperience || 0,
-          categories: profileFromAPI.categories.map((cat) => ({
-            categoryId: cat.CategoryID,
-            categoryName: cat.CategoryName,
-            priceMin: cat.PriceMin,
-            priceMax: cat.PriceMax,
-          })),
-        };
-        setFormData(formattedProfile);
-        setAllCategories(categoriesRes.data);
-      } catch (error) {
-        setMessage("Error al cargar los datos del perfil.");
+        setLoadingCats(true);
+        setCatsError("");
+        const res = await api.get("/public/categories");
+        setCategories(res.data || []);
+      } catch (err) {
+        console.error("Error cargando categorías:", err);
+        setCatsError(
+          err.response?.data?.message ||
+            "No se pudieron cargar las categorías."
+        );
       } finally {
-        setLoading(false);
+        setLoadingCats(false);
       }
     };
-    loadData();
+
+    fetchCategories();
+  }, []);
+
+  // 2) Cargar perfil del contratista logueado y rellenar el form
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // si no hay token, no intentamos llamar al backend
+        setLoadingProfile(false);
+        return;
+      }
+
+      try {
+        setLoadingProfile(true);
+        setProfileError("");
+
+        const res = await api.get("/contractor/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = res.data;
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            // si algo viene vacío de la BD, dejamos lo que ya teníamos
+            firstName: data.FirstName ?? prev.firstName,
+            lastName: data.LastName ?? prev.lastName,
+            email: data.Email ?? prev.email,
+            BusinessName: data.BusinessName || "",
+            PhoneNumber: data.PhoneNumber || "",
+            Bio: data.Bio || "",
+            YearsOfEcperience: data.YearsOfExperience
+              ? String(data.YearsOfExperience)
+              : "",
+            priceMin: data.PriceMin != null ? String(data.PriceMin) : "",
+            priceMax: data.PriceMax != null ? String(data.PriceMax) : "",
+            categoryId: data.CategoryID ? String(data.CategoryID) : "",
+          }));
+        }
+      } catch (err) {
+        console.error("Error al cargar el perfil:", err);
+        setProfileError(
+          err.response?.data?.message ||
+            "No se pudo cargar tu perfil actual."
+        );
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleCategoryToggle = (e, category) => {
-  };
-  const handlePriceChange = (categoryId, field, value) => {
-
+  // radio: un solo servicio principal
+  const handleCategoryChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      categoryId: e.target.value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Guardando...");
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Debes iniciar sesión para guardar tu perfil.");
+      navigate("/login");
+      return;
+    }
+
     try {
       const payload = {
-        businessName: formData.businessName,
-        phoneNumber: formData.phoneNumber,
-        bio: formData.bio,
-        yearsOfExperience: formData.yearsOfExperience,
-        categories: formData.categories.map((cat) => ({
-          categoryId: cat.categoryId,
-          priceMin: cat.priceMin,
-          priceMax: cat.priceMax,
-        })),
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        businessName: formData.BusinessName,
+        phoneNumber: formData.PhoneNumber,
+        bio: formData.Bio,
+        yearsOfExperience: Number(formData.YearsOfEcperience || 0),
+        priceMin: formData.priceMin ? Number(formData.priceMin) : null,
+        priceMax: formData.priceMax ? Number(formData.priceMax) : null,
+        // el backend espera un array
+        categoryIds: formData.categoryId ? [Number(formData.categoryId)] : [],
       };
-      const response = await updateContractorProfile(payload);
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage("Error al guardar el perfil.");
+
+      await api.put("/contractor/profile", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      alert("Perfil guardado correctamente ✅");
+      navigate("/inicio"); // o la ruta que uses como home logueado
+    } catch (err) {
+      console.error("Error al guardar el perfil:", err);
+      alert(
+        err.response?.data?.message ||
+          "Ocurrió un error al guardar el perfil."
+      );
     }
   };
 
-  if (loading)
-    return (
-      <div className="container">
-        <p>Cargando perfil...</p>
-      </div>
-    );
-  if (!formData)
-    return (
-      <div className="container">
-        <p>No se pudo cargar el perfil.</p>
-      </div>
-    );
-
   return (
     <div className="container">
-      <h1 className="title">Completa tu perfil</h1>
-      <form className="form" onSubmit={handleSubmit}>
-        <input
-          className="input"
-          name="businessName"
-          value={formData.businessName}
-          onChange={handleChange}
-          placeholder="Nombre del negocio"
-        />
-        <input
-          className="input"
-          name="phoneNumber"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          placeholder="Teléfono"
-        />
-        <textarea
-          className="input"
-          name="bio"
-          value={formData.bio}
-          onChange={handleChange}
-          placeholder="Biografía"
-        />
-        <input
-          className="input"
-          type="number"
-          name="yearsOfExperience"
-          value={formData.yearsOfExperience}
-          onChange={handleChange}
-          placeholder="Años de experiencia"
-        />
+      <div className="auth-logo">
+        <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
+        <span className="auth-logo-text">
+          Servi<span className="auth-logo-highlight">Conecta</span>
+        </span>
+      </div>
 
-        <div>
-          <span>Selecciona tus categorías de servicio:</span>
-          {allCategories.map((cat) => {
-            const isChecked = formData.categories.some(
-              (c) => c.categoryId === cat.CategoryID
-            );
-            const currentCategoryData = formData.categories.find(
-              (c) => c.categoryId === cat.CategoryID
-            );
-            return (
-              <div key={cat.CategoryID}>
-                <label>
+      <h1 className="title">Completa tu perfil</h1>
+      <p className="subtitle">
+        Esta información aparecerá en tu perfil público de ServiConecta.
+      </p>
+
+      {(loadingProfile || loadingCats) && (
+        <p style={{ color: "white", marginBottom: "10px" }}>
+          Cargando datos...
+        </p>
+      )}
+      {profileError && (
+        <p style={{ color: "red", marginBottom: "10px" }}>{profileError}</p>
+      )}
+
+      <form className="form form--wide" onSubmit={handleSubmit}>
+        <div className="form-grid">
+          {/* Nombre */}
+          <div className="form-group">
+            <label>Nombre</label>
+            <input
+              className="input"
+              type="text"
+              name="firstName"
+              placeholder="Nombre"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Apellido */}
+          <div className="form-group">
+            <label>Apellido</label>
+            <input
+              className="input"
+              type="text"
+              name="lastName"
+              placeholder="Apellido"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Correo */}
+          <div className="form-group">
+            <label>Correo electrónico</label>
+            <input
+              className="input"
+              type="email"
+              name="email"
+              placeholder="Correo electrónico"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Teléfono */}
+          <div className="form-group">
+            <label>Teléfono de contacto</label>
+            <input
+              className="input"
+              type="tel"
+              name="PhoneNumber"
+              placeholder="Teléfono de contacto"
+              value={formData.PhoneNumber}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Nombre del negocio */}
+          <div className="form-group form-group--full">
+            <label>Nombre del negocio (opcional)</label>
+            <input
+              className="input"
+              type="text"
+              name="BusinessName"
+              placeholder="Nombre del negocio (opcional)"
+              value={formData.BusinessName}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Bio */}
+          <div className="form-group form-group--full">
+            <label>Cuéntanos brevemente sobre ti y lo que haces</label>
+            <textarea
+              className="input"
+              name="Bio"
+              rows={4}
+              placeholder="Cuéntanos brevemente sobre ti y lo que haces"
+              value={formData.Bio}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Años de experiencia */}
+          <div className="form-group">
+            <label>Años de experiencia</label>
+            <input
+              className="input"
+              type="number"
+              name="YearsOfEcperience"
+              placeholder="Años de experiencia"
+              min="0"
+              value={formData.YearsOfEcperience}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Título rango */}
+          <div className="form-group form-group--full">
+            <label style={{ fontWeight: 600 }}>Establece un rango:</label>
+          </div>
+
+          {/* Precio mínimo */}
+          <div className="form-group">
+            <label>Desde...</label>
+            <input
+              className="input"
+              type="number"
+              name="priceMin"
+              placeholder="Precio mínimo (ej. 10)"
+              min="0"
+              step="5.0"
+              value={formData.priceMin}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Precio máximo */}
+          <div className="form-group">
+            <label>hasta.../ hora</label>
+            <input
+              className="input"
+              type="number"
+              name="priceMax"
+              placeholder="Precio máximo (ej. 20)"
+              min={formData.priceMin || 0}
+              step="5.0"
+              value={formData.priceMax}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Categoría */}
+          <div className="form-group form-group--full">
+            <label style={{ fontSize: "0.9rem" }}>
+              Selecciona tu servicio principal:
+            </label>
+
+            {loadingCats && <span>Cargando servicios...</span>}
+            {catsError && (
+              <span style={{ color: "red", fontSize: "0.85rem" }}>
+                {catsError}
+              </span>
+            )}
+
+            {!loadingCats &&
+              !catsError &&
+              categories.map((cat) => (
+                <label
+                  key={cat.CategoryID}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "0.9rem",
+                    marginTop: "2px",
+                  }}
+                >
                   <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(e) => handleCategoryToggle(e, cat)}
+                    type="radio"
+                    name="categoryId"
+                    value={cat.CategoryID}
+                    checked={
+                      String(formData.categoryId) ===
+                      String(cat.CategoryID)
+                    }
+                    onChange={handleCategoryChange}
                   />
                   {cat.CategoryName}
                 </label>
-                {isChecked && (
-                  <div style={{ marginLeft: "20px" }}>
-                    <input
-                      type="number"
-                      placeholder="Precio Mín."
-                      value={currentCategoryData.priceMin || ""}
-                      onChange={(e) =>
-                        handlePriceChange(
-                          cat.CategoryID,
-                          "priceMin",
-                          e.target.value
-                        )
-                      }
-                    />
-                    <input
-                      type="number"
-                      placeholder="Precio Máx."
-                      value={currentCategoryData.priceMax || ""}
-                      onChange={(e) =>
-                        handlePriceChange(
-                          cat.CategoryID,
-                          "priceMax",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              ))}
+          </div>
         </div>
+
         <button className="button" type="submit">
           Guardar perfil
         </button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
-}
+};
 
 export default WorkerForm;

@@ -26,12 +26,13 @@
 }
 
 .profiles-grid {
-  display: grid; 
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px; 
-  margin: 0 auto; 
+  gap: 20px;
   max-width: 1200px;
   padding: 0 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .profile-card-link {
@@ -52,7 +53,8 @@
   flex-direction: column;
   justify-content: space-between;
   transition: transform .15s ease, box-shadow .15s ease;
-  height: 100%;
+  height: 90%;
+  width: 90%;
 }
 
 .profile-card:hover {
@@ -68,13 +70,37 @@
   margin-bottom: 15px;
 }
 
-.profile-image {
-  width: 60px; 
-  height: 60px; 
-  border-radius: 50%; 
+/* === AVATAR EN LAS CARDS (icono/foto del servicio) === */
+.profile-avatar-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #262626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   margin-right: 15px;
+}
+
+/* si usas esta clase en el <img> del avatar */
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* recorta al círculo sin deformar */
+  display: block;
+}
+
+/* si sigues usando className="profile-image" en el <img> */
+.profile-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--orange-color);
+  flex-shrink: 0;
+  display: block;
 }
 
 .profile-name {
@@ -161,13 +187,15 @@
   color: var(--text-color);
 }
 
+/* imagen/ícono grande del perfil */
 .profile-detail-image {
-  width: 120px; 
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: cover;          /* se adapta al círculo */
   border: 3px solid var(--orange-color); 
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
+  display: block;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 

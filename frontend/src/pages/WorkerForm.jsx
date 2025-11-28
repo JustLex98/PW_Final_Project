@@ -1,186 +1,183 @@
-import React, { useState, useEffect } from "react";
-import {
-  getContractorProfile,
-  updateContractorProfile,
-  getAllCategories,
-} from "../api";
-import "../styles/Register.css";
+// src/pages/WorkerForm.jsx
+import React, { useState } from "react";
+import "../styles/Register.css"; // reutilizamos el estilo del register
+import { useLocation } from "react-router-dom";
 
-function WorkerForm() {
-  const [formData, setFormData] = useState(null);
-  const [allCategories, setAllCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+const WorkerForm = () => {
+  const location = useLocation();
+  const formRegister = location.state || {};
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [profileRes, categoriesRes] = await Promise.all([
-          getContractorProfile(),
-          getAllCategories(),
-        ]);
-        const profileFromAPI = profileRes.data;
-        const formattedProfile = {
-          businessName: profileFromAPI.BusinessName || "",
-          phoneNumber: profileFromAPI.PhoneNumber || "",
-          bio: profileFromAPI.Bio || "",
-          yearsOfExperience: profileFromAPI.YearsOfExperience || 0,
-          categories: profileFromAPI.categories.map((cat) => ({
-            categoryId: cat.CategoryID,
-            categoryName: cat.CategoryName,
-            priceMin: cat.PriceMin,
-            priceMax: cat.PriceMax,
-          })),
-        };
-        setFormData(formattedProfile);
-        setAllCategories(categoriesRes.data);
-      } catch (error) {
-        setMessage("Error al cargar los datos del perfil.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  const [formData, setFormData] = useState({
+    firstName: formRegister.firstName || "",
+    lastName: formRegister.lastName || "",
+    email: formRegister.email || "",
+    BusinessName: "",
+    PhoneNumber: "",
+    Bio: "",
+    YearsOfEcperience: "",
+    categroies: [],   
+  });
+
+  const categoriesOptions = [
+    "Carpintero",
+    "Electricista",
+    "Plomero",
+    "Pintor",
+    "Limpieza",
+    "Jardinería",
+    "Otro",
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleCategoryToggle = (e, category) => {
-  };
-  const handlePriceChange = (categoryId, field, value) => {
+  const handleCategoryChange = (e) => {
+    const { value, checked } = e.target;
 
+    setFormData((prev) => {
+      if (checked) {
+        // agregar categoría al array
+        return {
+          ...prev,
+          categroies: [...prev.categroies, value],
+        };
+      } else {
+        // quitar categoría del array
+        return {
+          ...prev,
+          categroies: prev.categroies.filter((c) => c !== value),
+        };
+      }
+    });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setMessage("Guardando...");
-    try {
-      const payload = {
-        businessName: formData.businessName,
-        phoneNumber: formData.phoneNumber,
-        bio: formData.bio,
-        yearsOfExperience: formData.yearsOfExperience,
-        categories: formData.categories.map((cat) => ({
-          categoryId: cat.categoryId,
-          priceMin: cat.priceMin,
-          priceMax: cat.priceMax,
-        })),
-      };
-      const response = await updateContractorProfile(payload);
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage("Error al guardar el perfil.");
-    }
+    console.log("Datos del trabajador:", formData);
+    alert("Perfil guardado (por ahora solo en consola 😄)");
+    // aquí luego haces el POST al backend y rediriges donde quieras
   };
-
-  if (loading)
-    return (
-      <div className="container">
-        <p>Cargando perfil...</p>
-      </div>
-    );
-  if (!formData)
-    return (
-      <div className="container">
-        <p>No se pudo cargar el perfil.</p>
-      </div>
-    );
 
   return (
     <div className="container">
+      {/* Logo en esquina */}
+      <div className="auth-logo">
+        <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
+        <span className="auth-logo-text">
+          Servi<span className="auth-logo-highlight">Conecta</span>
+        </span>
+      </div>
+
       <h1 className="title">Completa tu perfil</h1>
+      <p className="subtitle">
+        Esta información aparecerá en tu perfil público de ServiConecta.
+      </p>
+
       <form className="form" onSubmit={handleSubmit}>
         <input
           className="input"
-          name="businessName"
-          value={formData.businessName}
+          type="text"
+          name="firstName"
+          placeholder="Nombre"
+          value={formData.firstName}
           onChange={handleChange}
-          placeholder="Nombre del negocio"
+          required
         />
+
         <input
           className="input"
-          name="phoneNumber"
-          value={formData.phoneNumber}
+          type="text"
+          name="lastName"
+          placeholder="Apellido"
+          value={formData.lastName}
           onChange={handleChange}
-          placeholder="Teléfono"
+          required
         />
+
+        <input
+          className="input"
+          type="email"
+          name="email"
+          placeholder="Correo electrónico"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          className="input"
+          type="text"
+          name="BusinessName"
+          placeholder="Nombre del negocio (opcional)"
+          value={formData.BusinessName}
+          onChange={handleChange}
+        />
+
+        <input
+          className="input"
+          type="tel"
+          name="PhoneNumber"
+          placeholder="Teléfono de contacto"
+          value={formData.PhoneNumber}
+          onChange={handleChange}
+        />
+
         <textarea
           className="input"
-          name="bio"
-          value={formData.bio}
+          name="Bio"
+          placeholder="Cuéntanos brevemente sobre ti y lo que haces"
+          rows={4}
+          value={formData.Bio}
           onChange={handleChange}
-          placeholder="Biografía"
         />
+
         <input
           className="input"
           type="number"
-          name="yearsOfExperience"
-          value={formData.yearsOfExperience}
-          onChange={handleChange}
+          name="YearsOfEcperience"
           placeholder="Años de experiencia"
+          min="0"
+          value={formData.YearsOfEcperience}
+          onChange={handleChange}
         />
 
-        <div>
-          <span>Selecciona tus categorías de servicio:</span>
-          {allCategories.map((cat) => {
-            const isChecked = formData.categories.some(
-              (c) => c.categoryId === cat.CategoryID
-            );
-            const currentCategoryData = formData.categories.find(
-              (c) => c.categoryId === cat.CategoryID
-            );
-            return (
-              <div key={cat.CategoryID}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(e) => handleCategoryToggle(e, cat)}
-                  />
-                  {cat.CategoryName}
-                </label>
-                {isChecked && (
-                  <div style={{ marginLeft: "20px" }}>
-                    <input
-                      type="number"
-                      placeholder="Precio Mín."
-                      value={currentCategoryData.priceMin || ""}
-                      onChange={(e) =>
-                        handlePriceChange(
-                          cat.CategoryID,
-                          "priceMin",
-                          e.target.value
-                        )
-                      }
-                    />
-                    <input
-                      type="number"
-                      placeholder="Precio Máx."
-                      value={currentCategoryData.priceMax || ""}
-                      onChange={(e) =>
-                        handlePriceChange(
-                          cat.CategoryID,
-                          "priceMax",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        {/* Categorías (categroies[]) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>
+            Selecciona tus categorías de servicio:
+          </span>
+          {categoriesOptions.map((cat) => (
+            <label
+              key={cat}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                fontSize: "0.9rem",
+              }}
+            >
+              <input
+                type="checkbox"
+                value={cat}
+                checked={formData.categroies.includes(cat)}
+                onChange={handleCategoryChange}
+              />
+              {cat}
+            </label>
+          ))}
         </div>
+
         <button className="button" type="submit">
           Guardar perfil
         </button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
-}
+};
 
 export default WorkerForm;

@@ -1,4 +1,3 @@
-/* src/styles/Register.css (o Register.module.css) */
 
 .container {
   display: flex;
@@ -8,6 +7,7 @@
   min-height: 100vh;
   width: 100%;
   color: #f0f0f0;
+  position: relative;       /* para posicionar el logo en esquina */
 }
 
 .title {
@@ -33,10 +33,9 @@
   background-color: #333333;
   border-radius: 15px;
   
-  /* Ajuste de sombra principal para más efecto 3D */
   box-shadow: 
-    0 12px 24px rgba(0, 0, 0, 0.5), /* Más desplazamiento vertical, más desenfoque, más opacidad */
-    0 0 0 1px rgba(255, 255, 255, 0.08); /* Borde sutil ligeramente más visible */
+    0 12px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .input {
@@ -46,8 +45,7 @@
   background-color: #444444;
   color: #f0f0f0;
   font-size: 1em;
-  /* La sombra interior se mantiene para el efecto "hundido" */
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25); /* Un poco más de sombra interior */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25);
 }
 
 .input::placeholder {
@@ -65,8 +63,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   
-  /* Ajuste de sombra para el botón */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Más desplazamiento y desenfoque */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .button:hover {
@@ -74,6 +71,33 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
 }
 
+/* Logo en esquina para pantallas de auth (register / worker form) */
+
+.auth-logo {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.auth-logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.auth-logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.auth-logo-highlight {
+  color: #ff8c00; /* naranja ServiConecta */
+}
+
+/* (Opcional) estilos de selección de tipo de cuenta */
 .tipo-cuenta {
   margin-bottom: 10px;
 }
@@ -83,4 +107,78 @@
   transform: translateY(-1px);
 }
 
+/* ===== Estrellas interactivas para ReviewForm ===== */
 
+.review-stars-label {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.review-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.review-star {
+  background: none;
+  border: none;
+  font-size: 1.9rem;
+  cursor: pointer;
+  color: #555555; /* estrellas apagadas */
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.review-star.active {
+  color: #ff8c00; /* estrella ServiConecta */
+}
+
+.review-star:hover {
+  transform: translateY(-1px);
+}
+
+.review-stars-number {
+  font-size: 0.9rem;
+  color: rgba(240, 240, 240, 0.8);
+  margin-left: 4px;
+}
+
+/* ===== Layout especial para WorkerForm (más ancho, tipo 2 columnas) ===== */
+
+.form.form--wide {
+  width: 100%;
+  max-width: 1000px;      /* controla qué tan ancho llega el card */
+  padding: 40px 50px;
+  align-items: stretch;   /* que el contenido use todo el ancho */
+}
+
+/* contenedor grid de los campos */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;   /* por defecto 1 columna (mobile) */
+  gap: 18px 32px;               /* fila / columna */
+}
+
+/* cada campo con label */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+/* para campos que deben ocupar todo el ancho (bio, negocio, etc.) */
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+/* a partir de tablets/escritorio, pasamos a 2 columnas */
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

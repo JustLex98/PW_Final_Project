@@ -1,4 +1,4 @@
-// src/pages/Home.jsx
+// src/pages/HomeLogged.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
@@ -6,77 +6,48 @@ import api from "../api";
 import "../styles/home.css";
 import "../styles/profiles.css";
 
-// 👇 Orden deseado en la UI
-const CATEGORY_ORDER = [
-  "Carpintería",
-  "Electricidad",
-  "Plomería",
-  "Pintura",
-  "Limpieza",
-  "Otros servicios",
+const categories = [
+  { id: "carp", label: "Carpintería" },
+  { id: "electric", label: "Electricidad" },
+  { id: "plumbing", label: "Plomería" },
+  { id: "painting", label: "Pintura" },
+  { id: "cleaning", label: "Limpieza" },
+  { id: "other", label: "Otros servicios" },
 ];
 
-const Home = () => {
+const HomeLogged = () => {
   const navigate = useNavigate();
 
   const [profiles, setProfiles] = useState([]);
-  const [categories, setCategories] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("none");
+
+  // categoría seleccionada ("all" = todas)
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
 
-  // 1) Cargar contratistas + categorías desde el backend
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchContractors = async () => {
       try {
         setLoading(true);
         setError("");
 
-        const [contractorsRes, categoriesRes] = await Promise.all([
-          api.get("/public/contractors"),
-          api.get("/public/categories"),
-        ]);
-
-        setProfiles(contractorsRes.data || []);
-
-        let cats = (categoriesRes.data || []).map((c) => ({
-          id: String(c.CategoryID),
-          label: c.CategoryName,
-          description: c.Description,
-        }));
-
-        // 👇 Aplicar el orden que tú quieres
-        const desiredLower = CATEGORY_ORDER.map((s) => s.toLowerCase());
-        cats.sort((a, b) => {
-          const ia = desiredLower.indexOf(a.label.toLowerCase());
-          const ib = desiredLower.indexOf(b.label.toLowerCase());
-
-          if (ia === -1 && ib === -1) {
-            // ninguna está en la lista: orden alfabético normal
-            return a.label.localeCompare(b.label);
-          }
-          if (ia === -1) return 1; // a va después
-          if (ib === -1) return -1; // b va después
-          return ia - ib; // según CATEGORY_ORDER
-        });
-
-        setCategories(cats);
+        const res = await api.get("/public/contractors");
+        setProfiles(res.data || []);
       } catch (err) {
         console.error(err);
         setError(
           err.response?.data?.message ||
-            "No se pudieron cargar los datos. Intenta más tarde."
+            "No se pudieron cargar los perfiles. Intenta más tarde."
         );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchContractors();
   }, []);
 
   // etiqueta de la categoría seleccionada (texto) para buscar dentro de p.Categories
@@ -86,26 +57,27 @@ const Home = () => {
     return catObj ? catObj.label.toLowerCase() : null;
   })();
 
-// 2) Filtro por texto + categoría (incluye descripción/Bio)
-const filtered = profiles.filter((p) => {
-  const fullName = `${p.FirstName || ""} ${p.LastName || ""}`.trim();
-  const business = p.BusinessName || "";
-  const bio = p.Bio || "";          // 👈 descripción
-  const cats = p.Categories || "";
+  // Filtro por texto + categoría
+  const filtered = profiles.filter((p) => {
+    const fullName = `${p.FirstName || ""} ${p.LastName || ""}`.trim();
+    const business = p.BusinessName || "";
+    const bio = p.Bio || "";          // 👈 descripción
+    const cats = p.Categories || "";
 
-  // 👇 ahora el texto incluye la descripción también
-  const text = `${fullName} ${business} ${bio} ${cats}`.toLowerCase();
+    // 👇 ahora la búsqueda incluye la descripción/bio
+    const text = `${fullName} ${business} ${bio} ${cats}`.toLowerCase();
+    const matchesSearch = text.includes(searchTerm.toLowerCase());
 
-  const matchesSearch = text.includes(searchTerm.toLowerCase());
-  if (!matchesSearch) return false;
+    if (!matchesSearch) return false;
 
-  if (!selectedCategoryLabel) return true;
+    // si no hay categoría seleccionada, pasa solo por texto
+    if (!selectedCategoryLabel) return true;
 
-  const catsNormalized = cats.toLowerCase();
-  return catsNormalized.includes(selectedCategoryLabel);
-});
+    const catsNormalized = cats.toLowerCase();
+    return catsNormalized.includes(selectedCategoryLabel);
+  });
 
-  // 3) Ordenar perfiles
+  // Ordenamiento
   const filteredAndSorted = [...filtered].sort((a, b) => {
     if (sortBy === "name") {
       const na = `${a.FirstName} ${a.LastName}`.toLowerCase();
@@ -121,7 +93,7 @@ const filtered = profiles.filter((p) => {
 
   return (
     <div className="home">
-      {/* header */}
+      {/* HEADER */}
       <header className="home-header">
         <div className="home-header-left">
           <img
@@ -133,20 +105,32 @@ const filtered = profiles.filter((p) => {
             Servi<span className="home-brand-highlight">Conecta</span>
           </span>
         </div>
+
         <div className="home-header-actions">
           <button
             className="btn btn-outline"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/complete-profile")}
           >
-            Iniciar sesión
+            Editar mi perfil
           </button>
-          <button className="btn" onClick={() => navigate("/register")}>
-            Registrarme
+
+          <button
+            className="btn"
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              localStorage.removeItem("isLoggedIn");
+              localStorage.removeItem("userId");
+              localStorage.removeItem("userRole");
+              navigate("/");
+            }}
+          >
+            Cerrar sesión
           </button>
         </div>
       </header>
 
-      {/* hero */}
+      {/* HERO */}
       <section className="home-hero">
         <div>
           <h1 className="home-hero-title">
@@ -156,24 +140,6 @@ const filtered = profiles.filter((p) => {
             Revisa los perfiles, consulta reseñas y contáctalos directamente
             desde ServiConecta.
           </p>
-          <div className="home-hero-actions">
-            <button
-              className="btn"
-              onClick={() =>
-                document
-                  .getElementById("profiles-list")
-                  .scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              Estoy buscando a un pro
-            </button>
-            <button
-              className="btn btn-outline"
-              onClick={() => navigate("/register")}
-            >
-              Ofrecer mis servicios
-            </button>
-          </div>
         </div>
 
         <img
@@ -183,12 +149,12 @@ const filtered = profiles.filter((p) => {
         />
       </section>
 
-      {/* filtros */}
+      {/* FILTROS */}
       <section className="home-filters">
         <input
           className="home-search"
           type="text"
-          placeholder="Buscar por nombre, negocio, categoría o descripcion..."
+          placeholder="Buscar por nombre, negocio, descripción o categoría..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -203,7 +169,7 @@ const filtered = profiles.filter((p) => {
         </select>
       </section>
 
-      {/* categorías en el orden deseado */}
+      {/* CATEGORÍAS */}
       <section className="categories-section">
         <h2>Explora por categoría</h2>
         <div className="categories-grid">
@@ -223,17 +189,17 @@ const filtered = profiles.filter((p) => {
         </div>
       </section>
 
-      {/* listado de perfiles */}
+      {/* LISTADO DE PERFILES */}
       <section className="profiles-section" id="profiles-list">
         <div className="profiles-header">
           <h2>Perfiles destacados</h2>
           <p>
-            Puedes echarle un vistazo rápido a los perfiles sin necesidad de
-            iniciar sesión. Para verlos más detalladamente, ¡inicia sesión!
+            Puedes revisar los perfiles y administrar a tus profesionales de
+            confianza desde tu cuenta.
           </p>
         </div>
 
-        {loading && <p>Cargando datos...</p>}
+        {loading && <p>Cargando perfiles...</p>}
         {error && <p className="error">{error}</p>}
 
         {!loading && !error && (
@@ -247,13 +213,16 @@ const filtered = profiles.filter((p) => {
                 bio={p.Bio}
                 yearsOfExperience={p.YearsOfExperience}
                 categories={p.Categories}
+                rating={p.AvgRating}          // 👈 promedio desde la BD
+                reviewsCount={p.ReviewsCount} // 👈 cantidad de reseñas
               />
             ))}
           </div>
         )}
+
       </section>
     </div>
   );
 };
 
-export default Home;
+export default HomeLogged;

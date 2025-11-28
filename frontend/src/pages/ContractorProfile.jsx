@@ -1,4 +1,4 @@
-// frontend/src/pages/ContractorProfile.jsx
+
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/register.css"; // reutilizamos el estilo de la tarjeta

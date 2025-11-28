@@ -1,93 +1,188 @@
-// frontend/src/pages/Register.jsx
+// src/pages/Register.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 import "../styles/register.css";
 
 export default function Register() {
   const navigate = useNavigate();
-  const [nombre, setNombre] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [tipoCuenta, setTipoCuenta] = useState(""); // "cliente" | "contratista"
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "client", // "client" | "worker"
+  });
+
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (!nombre.trim() || !email.trim() || !password.trim()) {
-      setError("⚠ Todos los campos son obligatorios.");
-      return;
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-    if (!tipoCuenta) {
-      setError("⚠ Selecciona si buscas un pro o si buscas trabajo.");
-      return;
-    }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError("");
+    setSuccess("");
 
-    // Aquí luego harías el POST a la API para crear el usuario
-    // y guardarías el rol (tipoCuenta)
+    if (formData.password !== formData.confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
 
-    if (tipoCuenta === "contratista") {
-      // lo mando al formulario de perfil de contratista
-      navigate("/contractor-profile", {
-        state: { nombre, email }, // opcional: para prellenar cosas allá
+    const userRole =
+      formData.role === "worker" ? "Contratista" : "Cliente";
+
+    try {
+      setLoading(true);
+
+      // 1) REGISTRO
+      await api.post("/auth/register", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        userRole,
       });
-    } else {
-      // cliente normal → ver lista de pros
-      navigate("/profiles");
+
+      // 2) LOGIN AUTOMÁTICO
+      const loginRes = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const { token, user } = loginRes.data || {};
+
+      // 3) GUARDAR SESIÓN
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("isLoggedIn", "true");
+      }
+      if (user?.UserID) {
+        localStorage.setItem("userId", user.UserID);
+      }
+      if (user?.UserRole) {
+        localStorage.setItem("userRole", user.UserRole);
+      }
+
+      setSuccess("Usuario registrado exitosamente.");
+
+      // 4) NAVEGAR SEGÚN ROL
+      if (userRole === "Contratista") {
+        navigate("/complete-profile", {
+          state: {
+            firstName: user?.FirstName || formData.firstName,
+            lastName: user?.LastName || formData.lastName,
+            email: user?.Email || formData.email,
+          },
+        });
+      } else {
+        // Cliente
+        navigate("/inicio");
+      }
+    } catch (err) {
+      console.error(err);
+      const msg =
+        err.response?.status === 409
+          ? "Este correo ya está registrado."
+          : err.response?.data?.message ||
+            "Ocurrió un error al registrar. Inténtalo de nuevo.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container">
-      <h1 className="title">Crear cuenta</h1>
+      <div className="auth-logo">
+        <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
+        <span className="auth-logo-text">
+          Servi<span className="auth-logo-highlight">Conecta</span>
+        </span>
+      </div>
 
-      {/* Selector de tipo de cuenta */}
-      <button
-        type="button"
-        className={`button tipo-cuenta ${
-          tipoCuenta === "cliente" ? "tipo-cuenta-activo" : ""
-        }`}
-        onClick={() => setTipoCuenta("cliente")}
-      >
-        ¡Estoy buscando a un pro!
-      </button>
+      <h1 className="title">Crea tu cuenta</h1>
+      <p className="subtitle">
+        Regístrate en ServiConecta para ofrecer tus servicios o contratar
+        profesionales de confianza.
+      </p>
 
-      <button
-        type="button"
-        className={`button tipo-cuenta ${
-          tipoCuenta === "contratista" ? "tipo-cuenta-activo" : ""
-        }`}
-        onClick={() => setTipoCuenta("contratista")}
-      >
-        ¡Estoy buscando Trabajo!
-      </button>
-
-      <form className="form">
+      <form className="form" onSubmit={handleSubmit}>
         <input
+          className="input"
+          type="text"
+          name="firstName"
           placeholder="Nombre"
-          className="input"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          value={formData.firstName}
+          onChange={handleChange}
+          required
         />
+
         <input
-          placeholder="Email"
           className="input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          name="lastName"
+          placeholder="Apellido"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
         />
+
         <input
-          placeholder="Password"
+          className="input"
+          type="email"
+          name="email"
+          placeholder="Correo electrónico"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          className="input"
           type="password"
-          className="input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          placeholder="Contraseña"
+          value={formData.password}
+          onChange={handleChange}
+          required
         />
 
-        {error && <p className="error">{error}</p>}
+        <input
+          className="input"
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirmar contraseña"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+        />
 
-        <button type="button" className="button" onClick={handleRegister}>
-          Registrarme
+        <select
+          className="input"
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+        >
+          <option value="client">Quiero contratar profesionales</option>
+          <option value="worker">Quiero ofrecer mis servicios</option>
+        </select>
+
+        {error && <p className="login-error">{error}</p>}
+        {success && (
+          <p style={{ color: "lightgreen", marginTop: "4px" }}>{success}</p>
+        )}
+
+        <button className="button" type="submit" disabled={loading}>
+          {loading ? "Registrando..." : "Registrarme"}
         </button>
       </form>
     </div>

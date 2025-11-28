@@ -1,20 +1,17 @@
-const express = require('express');
+// BackEnd/routes/publicRoutes.js
+const express = require("express");
 const router = express.Router();
-const publicController = require('../controllers/publicController');
 
-/**
- * @route   GET /api/public/contractors
- * @desc    Obtener lista pública de contratistas (con filtros)
- * @access  Public
- */
-router.get('/contractors', publicController.getAllContractors);
+const publicController = require("../controllers/publicController");
+const { getPublicCategories } = require("../controllers/publicCategoryController");
 
-/**
- * @route   GET /api/public/contractors/:id
- * @desc    Obtener el perfil detallado de un solo contratista por su ID
- * @access  Public
- */
-router.get('/contractors/:id', publicController.getContractorById);
+// lista de contratistas
+router.get("/contractors", publicController.getAllContractors);
 
+// perfil detallado de un contratista
+router.get("/contractors/:id", publicController.getContractorById);
+
+// 🔹 categorías públicas (para Home y WorkerForm)
+router.get("/categories", getPublicCategories);
 
 module.exports = router;

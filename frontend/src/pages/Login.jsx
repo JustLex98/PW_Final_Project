@@ -1,11 +1,16 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api";              // 👈 importante
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../api";
 import "../styles/login.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // de dónde venía (ej. "/profile/3"), si no, "/inicio"
+  const from = location.state?.from || "/inicio";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,19 +25,17 @@ export default function Login() {
     }
 
     try {
-      // Llamamos a tu backend: POST http://localhost:3001/api/auth/login
       const res = await api.post("/auth/login", {
         email,
         password,
       });
 
-      // Guardamos token y datos básicos del usuario
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userName", res.data.name);
       localStorage.setItem("userRole", res.data.role);
 
-      // Te mando a la home de usuario logueado
-      navigate("/inicio");
+      // 👉 si venía de una ruta protegida, vuelve ahí; si no, a /inicio
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       setError(
@@ -82,7 +85,13 @@ export default function Login() {
       </form>
 
       <p className="login-footer-text">
-        ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
+        ¿No tienes cuenta?{" "}
+        <span
+          style={{ color: "#ff8c00", cursor: "pointer" }}
+          onClick={() => navigate("/register")}
+        >
+          Regístrate aquí
+        </span>
       </p>
     </div>
   );

@@ -1,10 +1,11 @@
 // src/App.jsx
+import RequireAuth from "./components/RequireAuth";
 import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
+  useLocation,
 } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -17,15 +18,6 @@ import NotFound from "./pages/NotFound";
 import WorkerForm from "./pages/WorkerForm";
 import ReviewForm from "./pages/ReviewForm";
 
-// Componente para proteger rutas
-const RequireAuth = ({ children }) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    // si no hay token, manda a login
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
 
 export default function App() {
   return (
@@ -47,24 +39,11 @@ export default function App() {
         {/* Lista de perfiles (pública por ahora) */}
         <Route path="/profiles" element={<Profiles />} />
 
-        {/* Detalle de perfil (protegido por login) */}
-        <Route
-          path="/profile/:id"
-          element={
-            <RequireAuth>
-              <ProfileDetail />
-            </RequireAuth>
-          }
-        />
-         {/* 👇 Nueva ruta para escribir reseña */}
-        <Route
-          path="/profile/:id/review"
-          element={
-            <RequireAuth>
-              <ReviewForm />
-            </RequireAuth>
-          }
-        />
+        {/* 🔒 RUTAS PROTEGIDAS CON RequireAuth (el de components) */}
+        <Route element={<RequireAuth />}>
+          <Route path="/profile/:id" element={<ProfileDetail />} />
+          <Route path="/profile/:id/review" element={<ReviewForm />} />
+        </Route>
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

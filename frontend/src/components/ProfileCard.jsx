@@ -1,9 +1,21 @@
 // src/components/ProfileCard.jsx
 import React from "react";
-import { Link } from "react-router-dom"; // Para navegar al detalle
-import "../styles/profiles.css"; // CSS de las tarjetas
+import { Link } from "react-router-dom";
+import "../styles/profiles.css";
 
-const ProfileCard = ({ id, name, job, price, rating, reviews, imageUrl }) => {
+const ProfileCard = ({
+  id,
+  name,
+  businessName,
+  bio,
+  yearsOfExperience,
+  categories,
+  // opcionales por si luego agregas esto
+  price,
+  rating,
+  reviews,
+  imageUrl,
+}) => {
   return (
     <Link to={`/profile/${id}`} className="profile-card-link">
       <div className="profile-card">
@@ -15,13 +27,39 @@ const ProfileCard = ({ id, name, job, price, rating, reviews, imageUrl }) => {
           />
           <div>
             <h2 className="profile-name">{name}</h2>
-            <p className="profile-job">{job}</p>
+            {/* nombre del negocio / oficio */}
+            {businessName && (
+              <p className="profile-job">{businessName}</p>
+            )}
+            {/* mini bio */}
+            {bio && (
+              <p className="profile-bio">
+                {bio.length > 80 ? bio.slice(0, 80) + "..." : bio}
+              </p>
+            )}
           </div>
         </div>
 
-        <p className="profile-price">${price}/hr</p>
+        {/* meta info */}
+        {typeof yearsOfExperience === "number" && (
+          <p className="profile-meta">
+            {yearsOfExperience} año{yearsOfExperience === 1 ? "" : "s"} de experiencia
+          </p>
+        )}
 
-        {rating && reviews && (
+        {categories && (
+          <p className="profile-meta">
+            Categorías: {categories}
+          </p>
+        )}
+
+        {/* solo mostramos precio si realmente viene algo */}
+        {price != null && (
+          <p className="profile-price">${price}/hr</p>
+        )}
+
+        {/* rating opcional */}
+        {rating != null && reviews != null && (
           <div className="profile-rating">
             <span>{"⭐".repeat(Math.round(rating))}</span>
             <span>
@@ -31,8 +69,7 @@ const ProfileCard = ({ id, name, job, price, rating, reviews, imageUrl }) => {
         )}
 
         <div className="profile-footer">
-          <div className="profile-match-tag">Great match</div>
-          <p className="profile-skills">✓ 3/3 skills</p>
+          <div className="profile-match-tag">Ver perfil</div>
         </div>
       </div>
     </Link>

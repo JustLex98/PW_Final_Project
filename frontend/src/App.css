@@ -2,7 +2,7 @@
   max-width: 100%;
   margin: 0;
   padding: 0;
-  text-align: initial; /* así no fuerza todo al centro */
+  text-align: initial; 
 }
 
 .logo {

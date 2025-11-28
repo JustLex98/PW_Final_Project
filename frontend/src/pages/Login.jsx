@@ -34,7 +34,6 @@ export default function Login() {
       localStorage.setItem("userName", res.data.name);
       localStorage.setItem("userRole", res.data.role);
 
-      // 👉 si venía de una ruta protegida, vuelve ahí; si no, a /inicio
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
@@ -47,7 +46,7 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="auth-logo">
-        <img src="/serviconecta-logo-dark.png" alt="ServiConecta" />
+        <img src="/serviconecta-logo-sin-letras.png" alt="ServiConecta" />
         <span className="auth-logo-text">
           Servi<span className="auth-logo-highlight">Conecta</span>
         </span>

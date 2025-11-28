@@ -17,6 +17,7 @@ export default function Register() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +41,9 @@ export default function Register() {
       formData.role === "worker" ? "Contratista" : "Cliente";
 
     try {
+      setLoading(true);
+
+      // 1) REGISTRO
       await api.post("/auth/register", {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -48,26 +52,51 @@ export default function Register() {
         userRole,
       });
 
+      // 2) LOGIN AUTOMÁTICO
+      const loginRes = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const { token, user } = loginRes.data || {};
+
+      // 3) GUARDAR SESIÓN
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("isLoggedIn", "true");
+      }
+      if (user?.UserID) {
+        localStorage.setItem("userId", user.UserID);
+      }
+      if (user?.UserRole) {
+        localStorage.setItem("userRole", user.UserRole);
+      }
+
       setSuccess("Usuario registrado exitosamente.");
-      // si es contratista, luego lo mandamos a completar perfil
+
+      // 4) NAVEGAR SEGÚN ROL
       if (userRole === "Contratista") {
         navigate("/complete-profile", {
           state: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
+            firstName: user?.FirstName || formData.firstName,
+            lastName: user?.LastName || formData.lastName,
+            email: user?.Email || formData.email,
           },
         });
-        
       } else {
-        navigate("/login");
+        // Cliente
+        navigate("/inicio");
       }
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.message ||
-          "Ocurrió un error al registrar. Inténtalo de nuevo."
-      );
+      const msg =
+        err.response?.status === 409
+          ? "Este correo ya está registrado."
+          : err.response?.data?.message ||
+            "Ocurrió un error al registrar. Inténtalo de nuevo.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,17 +176,13 @@ export default function Register() {
           <option value="worker">Quiero ofrecer mis servicios</option>
         </select>
 
-        {error && (
-          <p className="login-error">
-            {error}
-          </p>
-        )}
+        {error && <p className="login-error">{error}</p>}
         {success && (
           <p style={{ color: "lightgreen", marginTop: "4px" }}>{success}</p>
         )}
 
-        <button className="button" type="submit">
-          Registrarme
+        <button className="button" type="submit" disabled={loading}>
+          {loading ? "Registrando..." : "Registrarme"}
         </button>
       </form>
     </div>

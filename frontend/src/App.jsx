@@ -1,12 +1,12 @@
 // src/App.jsx
-import RequireAuth from "./components/RequireAuth";
 import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
 } from "react-router-dom";
+
+import RequireAuth from "./components/RequireAuth";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -17,7 +17,6 @@ import ProfileDetail from "./pages/ProfileDetail";
 import NotFound from "./pages/NotFound";
 import WorkerForm from "./pages/WorkerForm";
 import ReviewForm from "./pages/ReviewForm";
-
 
 export default function App() {
   return (
@@ -39,7 +38,7 @@ export default function App() {
         {/* Lista de perfiles (pública por ahora) */}
         <Route path="/profiles" element={<Profiles />} />
 
-        {/* 🔒 RUTAS PROTEGIDAS CON RequireAuth (el de components) */}
+        {/* RUTAS PROTEGIDAS CON RequireAuth */}
         <Route element={<RequireAuth />}>
           <Route path="/profile/:id" element={<ProfileDetail />} />
           <Route path="/profile/:id/review" element={<ReviewForm />} />

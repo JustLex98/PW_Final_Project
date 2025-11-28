@@ -1,8 +1,5 @@
 const { executeQuery, sql } = require('../db/db');
 
-/**
- * Obtiene una lista pública de contratistas, con opción de filtrado.
- */
 async function getAllContractors(req, res) {
     const { search, category } = req.query;
 
@@ -17,12 +14,14 @@ async function getAllContractors(req, res) {
                     JOIN Categories c ON cc.CategoryID = c.CategoryID
                     WHERE cc.UserID = u.UserID
                 ) AS Categories
-            FROM Users u
-            JOIN ContractorProfiles cp ON u.UserID = cp.UserID
-            WHERE u.UserRole = 'Contratista'
+            FROM 
+                Users u
+            JOIN 
+                ContractorProfiles cp ON u.UserID = cp.UserID
+            WHERE 
+                u.UserRole = 'Contratista'
         `;
 
-        // --- CORRECCIÓN: Usar el nuevo formato de parámetros ---
         const params = [];
         let conditions = [];
 
@@ -49,54 +48,6 @@ async function getAllContractors(req, res) {
     }
 }
 
-/**
- * Obtiene el perfil detallado y público de un solo contratista, incluyendo sus reseñas.
- */
-async function getContractorById(req, res) {
-    const { id } = req.params;
-
-    try {
-        const profileQuery = `
-            SELECT 
-                u.UserID, u.FirstName, u.LastName, u.Email,
-                cp.BusinessName, cp.PhoneNumber, cp.Bio, cp.YearsOfExperience
-            FROM Users u
-            LEFT JOIN ContractorProfiles cp ON u.UserID = cp.UserID
-            WHERE u.UserID = @contractorId AND u.UserRole = 'Contratista';
-        `;
-        
-        const reviewsQuery = `
-            SELECT 
-                r.Rating, r.Comment, r.CreatedAt,
-                c.FirstName AS ClientFirstName
-            FROM Reviews r
-            JOIN Users c ON r.ClientID = c.UserID
-            WHERE r.ContractorID = @contractorId
-            ORDER BY r.CreatedAt DESC;
-        `;
-
-        // --- CORRECCIÓN: Usar el nuevo formato de parámetros ---
-        const params = [{ name: 'contractorId', type: sql.Int, value: id }];
-
-        const profileResult = await executeQuery(profileQuery, params);
-        const reviewsResult = await executeQuery(reviewsQuery, params);
-
-        if (profileResult.recordset.length === 0) {
-            return res.status(404).send({ message: 'Contratista no encontrado.' });
-        }
-        
-        const contractorProfile = profileResult.recordset[0];
-        contractorProfile.reviews = reviewsResult.recordset;
-
-        res.status(200).json(contractorProfile);
-
-    } catch (error) {
-        console.error("Error al obtener el perfil detallado del contratista:", error);
-        res.status(500).send({ message: 'Error interno del servidor.' });
-    }
-}
-
 module.exports = {
-    getAllContractors,
-    getContractorById,
+    getAllContractors, // Solo exportamos la función que queda.
 };

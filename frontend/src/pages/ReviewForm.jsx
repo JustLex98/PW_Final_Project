@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import api from "../api";
-import "../styles/profiles.css"; // puedes hacer estilos allí o en otro css
+import "../styles/profiles.css"; 
 
 export default function ReviewForm() {
-  const { id } = useParams(); // /profile/:id/review
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const location = useLocation();
 

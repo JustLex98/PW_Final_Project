@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../api";
@@ -8,7 +7,6 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // de dónde venía (ej. "/profile/3"), si no, "/inicio"
   const from = location.state?.from || "/inicio";
 
   const [email, setEmail] = useState("");

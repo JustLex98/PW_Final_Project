@@ -1,9 +1,7 @@
-// src/components/ProfileCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/profiles.css";
 
-// 👇 IMPORTA LAS IMÁGENES POR SERVICIO (ajusta los nombres según tus archivos)
 import carpImg from "../assets/carpintero.jpg";
 import electricImg from "../assets/electricista.png";
 import plumbingImg from "../assets/plomero.jpg";
@@ -11,7 +9,7 @@ import paintingImg from "../assets/pintor.jpg";
 import cleaningImg from "../assets/limpieza.jpg";
 import otherImg from "../assets/otro.jpg";
 
-// Decide qué imagen usar según las categorías del contratista
+// Decide qué profilepic segun categria 
 function getServiceImage(categories) {
   const text = (categories || "").toLowerCase();
 
@@ -21,7 +19,7 @@ function getServiceImage(categories) {
   if (text.includes("pintur")) return paintingImg;
   if (text.includes("limpiez")) return cleaningImg;
 
-  // por defecto
+  // si no se agarra ni uno agarrra la de otro por defecto
   return otherImg;
 }
 
@@ -32,15 +30,15 @@ export default function ProfileCard({
   bio,
   yearsOfExperience,
   categories,
-  rating,        // AvgRating del backend
-  reviewsCount,  // ReviewsCount del backend
+  rating,        
+  reviewsCount, 
 }) {
   const navigate = useNavigate();
 
   const avatarSrc = getServiceImage(categories);
   const hasRating = rating != null && reviewsCount > 0;
 
-  // limitar estrellas de 1 a 5 para no romper nada
+  //  estrellas de 1 a 5 para no romper nada
   const stars = hasRating ? Math.max(1, Math.min(5, Math.round(rating))) : 0;
 
   return (
@@ -92,7 +90,7 @@ export default function ProfileCard({
         </span>
       </div>
 
-      {/* FOOTER (puedes añadir un botón si quieres) */}
+      {/* FOOTER */}
       <div className="profile-footer">
         <button
           className="profile-review-button"

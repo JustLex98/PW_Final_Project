@@ -84,15 +84,14 @@
   margin-right: 15px;
 }
 
-/* si usas esta clase en el <img> del avatar */
+
 .profile-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;   /* recorta al círculo sin deformar */
+  object-fit: cover;   
   display: block;
 }
 
-/* si sigues usando className="profile-image" en el <img> */
 .profile-image {
   width: 70px;
   height: 70px;

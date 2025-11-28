@@ -1,4 +1,3 @@
-// src/pages/HomeLogged.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
@@ -25,7 +24,7 @@ const HomeLogged = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("none");
 
-  // categoría seleccionada ("all" = todas)
+ 
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
 
   useEffect(() => {
@@ -50,34 +49,30 @@ const HomeLogged = () => {
     fetchContractors();
   }, []);
 
-  // etiqueta de la categoría seleccionada (texto) para buscar dentro de p.Categories
   const selectedCategoryLabel = (() => {
     if (selectedCategoryId === "all") return null;
     const catObj = categories.find((c) => c.id === selectedCategoryId);
     return catObj ? catObj.label.toLowerCase() : null;
   })();
 
-  // Filtro por texto + categoría
   const filtered = profiles.filter((p) => {
     const fullName = `${p.FirstName || ""} ${p.LastName || ""}`.trim();
     const business = p.BusinessName || "";
-    const bio = p.Bio || "";          // 👈 descripción
+    const bio = p.Bio || "";        
     const cats = p.Categories || "";
 
-    // 👇 ahora la búsqueda incluye la descripción/bio
+   
     const text = `${fullName} ${business} ${bio} ${cats}`.toLowerCase();
     const matchesSearch = text.includes(searchTerm.toLowerCase());
 
     if (!matchesSearch) return false;
 
-    // si no hay categoría seleccionada, pasa solo por texto
     if (!selectedCategoryLabel) return true;
 
     const catsNormalized = cats.toLowerCase();
     return catsNormalized.includes(selectedCategoryLabel);
   });
 
-  // Ordenamiento
   const filteredAndSorted = [...filtered].sort((a, b) => {
     if (sortBy === "name") {
       const na = `${a.FirstName} ${a.LastName}`.toLowerCase();
@@ -213,8 +208,8 @@ const HomeLogged = () => {
                 bio={p.Bio}
                 yearsOfExperience={p.YearsOfExperience}
                 categories={p.Categories}
-                rating={p.AvgRating}          // 👈 promedio desde la BD
-                reviewsCount={p.ReviewsCount} // 👈 cantidad de reseñas
+                rating={p.AvgRating}       
+                reviewsCount={p.ReviewsCount} 
               />
             ))}
           </div>

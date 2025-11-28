@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
@@ -12,7 +11,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "client", // "client" | "worker"
+    role: "client",
   });
 
   const [error, setError] = useState("");

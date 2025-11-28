@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
@@ -6,7 +5,6 @@ import api from "../api";
 import "../styles/home.css";
 import "../styles/profiles.css";
 
-// 👇 Orden deseado en la UI
 const CATEGORY_ORDER = [
   "Carpintería",
   "Electricidad",
@@ -49,14 +47,13 @@ const Home = () => {
           description: c.Description,
         }));
 
-        // 👇 Aplicar el orden que tú quieres
         const desiredLower = CATEGORY_ORDER.map((s) => s.toLowerCase());
         cats.sort((a, b) => {
           const ia = desiredLower.indexOf(a.label.toLowerCase());
           const ib = desiredLower.indexOf(b.label.toLowerCase());
 
           if (ia === -1 && ib === -1) {
-            // ninguna está en la lista: orden alfabético normal
+            // orden alfabético normal
             return a.label.localeCompare(b.label);
           }
           if (ia === -1) return 1; // a va después
@@ -90,10 +87,9 @@ const Home = () => {
 const filtered = profiles.filter((p) => {
   const fullName = `${p.FirstName || ""} ${p.LastName || ""}`.trim();
   const business = p.BusinessName || "";
-  const bio = p.Bio || "";          // 👈 descripción
+  const bio = p.Bio || "";          
   const cats = p.Categories || "";
 
-  // 👇 ahora el texto incluye la descripción también
   const text = `${fullName} ${business} ${bio} ${cats}`.toLowerCase();
 
   const matchesSearch = text.includes(searchTerm.toLowerCase());

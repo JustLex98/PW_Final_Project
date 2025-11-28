@@ -1,4 +1,3 @@
-// src/pages/WorkerForm.jsx
 import React, { useState, useEffect } from "react";
 import "../styles/Register.css";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,7 +18,7 @@ const WorkerForm = () => {
     YearsOfEcperience: "",
     priceMin: "",
     priceMax: "",
-    categoryId: "", // un solo servicio principal
+    categoryId: "", 
   });
 
   const [categories, setCategories] = useState([]);

@@ -1,10 +1,8 @@
-// src/pages/ProfileDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import "../styles/profiles.css";
 
-// mismas imágenes que en ProfileCard (ajusta las rutas si cambia algo)
 import carpImg from "../assets/carpintero.jpg";
 import electricImg from "../assets/electricista.png";
 import plumbingImg from "../assets/plomero.jpg";
@@ -83,7 +81,7 @@ export default function ProfileDetail() {
   const mainCategory =
     (profile.Categories || "").split(",")[0]?.trim() || "No especificado";
 
-  // texto de precio
+  
   let priceText = "No especificado";
   if (profile.PriceMin != null && profile.PriceMax != null) {
     priceText = `$${profile.PriceMin} - $${profile.PriceMax}`;

@@ -151,8 +151,8 @@ const WorkerForm = () => {
         },
       });
 
-      alert("Perfil guardado correctamente ✅");
-      navigate("/inicio"); // o la ruta que uses como home logueado
+      alert("Perfil guardado correctamente ");
+      navigate("/inicio"); 
     } catch (err) {
       console.error("Error al guardar el perfil:", err);
       alert(
@@ -194,7 +194,7 @@ const WorkerForm = () => {
               className="input"
               type="text"
               name="firstName"
-              placeholder="Nombre"
+              placeholder="tu nombre"
               value={formData.firstName}
               onChange={handleChange}
               required
@@ -208,7 +208,7 @@ const WorkerForm = () => {
               className="input"
               type="text"
               name="lastName"
-              placeholder="Apellido"
+              placeholder="tu apellido"
               value={formData.lastName}
               onChange={handleChange}
               required
@@ -222,7 +222,7 @@ const WorkerForm = () => {
               className="input"
               type="email"
               name="email"
-              placeholder="Correo electrónico"
+              placeholder="tu correo"
               value={formData.email}
               onChange={handleChange}
               required
@@ -236,7 +236,7 @@ const WorkerForm = () => {
               className="input"
               type="tel"
               name="PhoneNumber"
-              placeholder="Teléfono de contacto"
+              placeholder="Adonde te podamos contactar "
               value={formData.PhoneNumber}
               onChange={handleChange}
             />
@@ -249,7 +249,7 @@ const WorkerForm = () => {
               className="input"
               type="text"
               name="BusinessName"
-              placeholder="Nombre del negocio (opcional)"
+              placeholder="Solo aplica si tienes un negocio"
               value={formData.BusinessName}
               onChange={handleChange}
             />
@@ -257,7 +257,7 @@ const WorkerForm = () => {
 
           {/* Bio */}
           <div className="form-group form-group--full">
-            <label>Cuéntanos brevemente sobre ti y lo que haces</label>
+            <label>Descripcion</label>
             <textarea
               className="input"
               name="Bio"
@@ -275,7 +275,7 @@ const WorkerForm = () => {
               className="input"
               type="number"
               name="YearsOfEcperience"
-              placeholder="Años de experiencia"
+              placeholder="tus años en el rubro"
               min="0"
               value={formData.YearsOfEcperience}
               onChange={handleChange}

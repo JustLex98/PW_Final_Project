@@ -1,9 +1,9 @@
-// BackEnd/controllers/contractorProfileController.js
+
 const { executeQuery, sql } = require("../db/db");
 
-// =======================================
+
 // 1) OBTENER PERFIL DEL CONTRATISTA
-// =======================================
+
 async function getProfile(req, res) {
   const userId = req.user.userId;
 
@@ -136,7 +136,7 @@ async function updateProfile(req, res) {
         });
       });
 
-      // quitar coma final
+  
       insertQuery = insertQuery.slice(0, -1);
 
       await executeQuery(insertQuery, insertParams);
@@ -155,8 +155,7 @@ async function updateProfile(req, res) {
 
 async function getMyContractorProfile(req, res) {
   try {
-    const userId = req.user.userId; // 👈 igual que en getProfile / updateProfile
-
+    const userId = req.user.userId; 
     const query = `
       SELECT 
         u.UserID,
@@ -194,7 +193,6 @@ async function getMyContractorProfile(req, res) {
   }
 }
 
-// 👈 MUY IMPORTANTE: exportar las funciones correctamente
 module.exports = {
   getProfile,
   updateProfile,

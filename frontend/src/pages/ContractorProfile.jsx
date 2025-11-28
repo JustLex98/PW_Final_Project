@@ -27,9 +27,7 @@ export default function ContractorProfile() {
 
     setError("");
 
-    // Aquí harías tu POST a la API:
-    // /api/contractor-profiles
-    // body: { businessName, phoneNumber, bio, yearsOfExperience, userName: nombre, email }
+
 
     console.log({
       userName: nombre,
@@ -40,7 +38,7 @@ export default function ContractorProfile() {
       yearsOfExperience,
     });
 
-    // Después de guardar, por ejemplo lo mando a ver los perfiles
+  
     navigate("/profiles");
   };
 

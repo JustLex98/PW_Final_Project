@@ -83,7 +83,7 @@ export default function ProfileCard({
       {/* RATING */}
       <div className="profile-rating">
         <span>
-          {hasRating ? "⭐".repeat(stars) : "★★★★★"}
+          {hasRating ? "★".repeat(stars) : "★★★★★"}
         </span>
         <span>
           {hasRating

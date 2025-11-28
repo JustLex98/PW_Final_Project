@@ -161,15 +161,6 @@ export default function ProfileDetail() {
             </p>
           )}
 
-          {hasRating && (
-            <div className="profile-detail-rating">
-              <span>{"⭐".repeat(avgStars)}</span>
-              <span>
-                {profile.avgRating.toFixed(1)} (
-                {profile.reviewsCount} reseñas)
-              </span>
-            </div>
-          )}
 
           <button
             className="profile-review-button"
@@ -187,7 +178,7 @@ export default function ProfileDetail() {
           <div className="profile-review-summary">
             <span className="profile-review-stars">
               {hasRating
-                ? "⭐".repeat(avgStars)
+                ? "★".repeat(avgStars)
                 : "★★★★★"}
             </span>
             <span className="profile-review-rating">
@@ -204,7 +195,7 @@ export default function ProfileDetail() {
               profile.reviews.map((r, idx) => (
                 <article key={idx} className="profile-review-item">
                   <p className="profile-review-text">
-                    {"⭐".repeat(r.Rating || 0)}{" "}
+                    {"★".repeat(r.Rating || 0)}{" "}
                     {r.Comment}
                   </p>
                   <p className="profile-review-author">

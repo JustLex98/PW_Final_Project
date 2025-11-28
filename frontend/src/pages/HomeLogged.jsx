@@ -1,8 +1,8 @@
-// src/pages/HomeLogged.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
 import api from "../api";
+import { useAuth } from "../auth/AuthContext.jsx"; 
 import "../styles/home.css";
 import "../styles/profiles.css";
 
@@ -17,15 +17,13 @@ const categories = [
 
 const HomeLogged = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("none");
-
-  // categoría seleccionada ("all" = todas)
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
 
   useEffect(() => {
@@ -33,7 +31,6 @@ const HomeLogged = () => {
       try {
         setLoading(true);
         setError("");
-
         const res = await api.get("/public/contractors");
         setProfiles(res.data || []);
       } catch (err) {
@@ -46,38 +43,28 @@ const HomeLogged = () => {
         setLoading(false);
       }
     };
-
     fetchContractors();
   }, []);
 
-  // etiqueta de la categoría seleccionada (texto) para buscar dentro de p.Categories
   const selectedCategoryLabel = (() => {
     if (selectedCategoryId === "all") return null;
     const catObj = categories.find((c) => c.id === selectedCategoryId);
     return catObj ? catObj.label.toLowerCase() : null;
   })();
 
-  // Filtro por texto + categoría
   const filtered = profiles.filter((p) => {
     const fullName = `${p.FirstName || ""} ${p.LastName || ""}`.trim();
     const business = p.BusinessName || "";
-    const bio = p.Bio || "";          // 👈 descripción
+    const bio = p.Bio || "";
     const cats = p.Categories || "";
-
-    // 👇 ahora la búsqueda incluye la descripción/bio
     const text = `${fullName} ${business} ${bio} ${cats}`.toLowerCase();
     const matchesSearch = text.includes(searchTerm.toLowerCase());
-
     if (!matchesSearch) return false;
-
-    // si no hay categoría seleccionada, pasa solo por texto
     if (!selectedCategoryLabel) return true;
-
     const catsNormalized = cats.toLowerCase();
     return catsNormalized.includes(selectedCategoryLabel);
   });
 
-  // Ordenamiento
   const filteredAndSorted = [...filtered].sort((a, b) => {
     if (sortBy === "name") {
       const na = `${a.FirstName} ${a.LastName}`.toLowerCase();
@@ -89,6 +76,11 @@ const HomeLogged = () => {
 
   const handleCategoryClick = (id) => {
     setSelectedCategoryId((prev) => (prev === id ? "all" : id));
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -107,24 +99,17 @@ const HomeLogged = () => {
         </div>
 
         <div className="home-header-actions">
-          <button
-            className="btn btn-outline"
-            onClick={() => navigate("/complete-profile")}
-          >
-            Editar mi perfil
-          </button>
+          {/* --- INICIO DE LA LÓGICA CONDICIONAL --- */}
+          {user && user.role === "Contratista" && (
+            <button
+              className="btn btn-outline"
+              onClick={() => navigate("/worker-form")}
+            >
+              Editar mi perfil
+            </button>
+          )}
 
-          <button
-            className="btn"
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              localStorage.removeItem("isLoggedIn");
-              localStorage.removeItem("userId");
-              localStorage.removeItem("userRole");
-              navigate("/");
-            }}
-          >
+          <button className="btn" onClick={handleLogout}>
             Cerrar sesión
           </button>
         </div>
@@ -141,7 +126,6 @@ const HomeLogged = () => {
             desde ServiConecta.
           </p>
         </div>
-
         <img
           src="/serviconecta-logo-dark.png"
           alt="ServiConecta"
@@ -158,7 +142,6 @@ const HomeLogged = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <select
           className="home-select"
           value={sortBy}
@@ -213,13 +196,12 @@ const HomeLogged = () => {
                 bio={p.Bio}
                 yearsOfExperience={p.YearsOfExperience}
                 categories={p.Categories}
-                rating={p.AvgRating}          // 👈 promedio desde la BD
-                reviewsCount={p.ReviewsCount} // 👈 cantidad de reseñas
+                rating={p.AvgRating}
+                reviewsCount={p.ReviewsCount}
               />
             ))}
           </div>
         )}
-
       </section>
     </div>
   );
